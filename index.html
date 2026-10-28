@@ -20,14 +20,18 @@ button{cursor:pointer}
 .hero{background:#fff;border:1px solid #e4eaf0;border-radius:20px;padding:25px 30px;min-height:150px;color:var(--ink);position:relative;overflow:hidden;box-shadow:var(--shadow)}
 .hero:before{content:"";position:absolute;inset:0 0 0 43%;background:linear-gradient(116deg,transparent 0 18%,rgba(216,255,225,.62) 18.3% 31%,transparent 31.3% 100%),linear-gradient(116deg,transparent 0 40%,rgba(76,175,105,.56) 40.3% 55%,transparent 55.3% 100%),linear-gradient(116deg,transparent 0 65%,rgba(19,94,51,.38) 65.3% 80%,transparent 80.3% 100%),linear-gradient(112deg,#b7e4c7 0%,#74c69d 28%,#2d9b62 58%,#14532d 100%);clip-path:polygon(17% 0,100% 0,100% 100%,0 100%)}
 .hero:after{content:"";position:absolute;inset:0 0 0 43%;clip-path:polygon(17% 0,100% 0,100% 100%,0 100%);background:repeating-linear-gradient(119deg,transparent 0 48px,rgba(255,255,255,.18) 49px 51px,transparent 52px 91px);pointer-events:none}
-.hero-top{display:flex;align-items:center;justify-content:space-between;gap:20px;position:relative;z-index:1}
+.hero-top{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;position:relative;z-index:1}
 .brand{display:flex;align-items:center;gap:0;min-width:0}
 .brand-copy{position:relative;z-index:1}
 .eyebrow{text-transform:uppercase;letter-spacing:.14em;font-size:10px;font-weight:800;color:#34764d;margin-bottom:4px}
 h1{font-size:clamp(23px,3vw,32px);letter-spacing:-.035em;line-height:1.15;margin:0;font-weight:760}
 .hero p{color:#617287;max-width:670px;margin:12px 0 0;position:relative;z-index:1}
-.hero-badge{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:999px;background:rgba(12,65,35,.35);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:12px;font-weight:650;white-space:nowrap}
-.hero-badge span{width:7px;height:7px;border-radius:50%;background:#c8f2d1;box-shadow:0 0 0 4px rgba(200,242,209,.18)}
+.hero-controls{display:flex;align-items:center;gap:7px;position:relative;z-index:2;flex-shrink:0}
+.hero-badge{display:flex;align-items:center;gap:7px;min-height:32px;padding:6px 10px;border-radius:999px;background:rgba(12,65,35,.35);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:11px;font-weight:700;white-space:nowrap}
+.hero-badge .status-dot{width:7px;height:7px;flex:0 0 7px;border-radius:50%;background:#c8f2d1;box-shadow:0 0 0 4px rgba(200,242,209,.18)}
+.hero-auth-btn{width:32px;height:32px;padding:0;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.42);color:#fff;border-radius:9px;box-shadow:none}
+.hero-auth-btn:hover{background:rgba(255,255,255,.3)}
+.hero-auth-btn svg{width:16px;height:16px}
 .summary-panel{margin:18px 0 22px;overflow:hidden}
 .summary-panel .panel-head{padding-bottom:14px}
 .summary-panel.collapsed .summary-table-wrap{display:none}
@@ -144,11 +148,15 @@ tbody tr:last-child td{border-bottom:0}
 .modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:20px}
 .btn-danger{background:#be123c;color:white}
 .btn-danger:hover{background:#9f1239}
+.public-mode .form-panel{display:none}
+.public-mode .layout{grid-template-columns:minmax(0,1fr)}
+.public-mode .delete-col{display:none}
+.cloud-loading .layout{opacity:.65;pointer-events:none}
 .field-error{color:#c2413b;font-size:11px;margin-top:6px;display:none}
 .field-error.show{display:block}
 footer{color:#8b98a8;font-size:11px;text-align:center;padding:20px 0 0}
 @media(max-width:1050px){.layout{grid-template-columns:minmax(280px,360px) minmax(0,1fr)}.main-panel-head{flex-direction:column}.toolbar{justify-content:flex-start}}
-@media(max-width:800px){.app-shell{padding:14px 12px 28px}.hero{padding:23px 20px;border-radius:20px}.hero:before,.hero:after{left:64%}.hero-top{align-items:flex-start}.hero-badge{display:none}.hero p{max-width:100%}.hero .brand{max-width:62%}.summary-panel{margin:12px 0 15px}.layout{grid-template-columns:1fr;gap:15px}.layout>.panel{height:auto}.list-panel{max-height:min(var(--form-panel-height,75vh),75vh)}.panel-head,.main-panel-head{padding:18px}.form-body{padding:18px}.panel{border-radius:16px}}
+@media(max-width:800px){.app-shell{padding:14px 12px 28px}.hero{padding:23px 20px;border-radius:20px}.hero:before,.hero:after{left:64%}.hero-top{align-items:flex-start;gap:10px}.hero-controls{gap:5px}.hero-badge{display:flex;min-height:30px;padding:5px 8px;font-size:10px}.hero-auth-btn{width:30px;height:30px}.hero p{max-width:100%}.hero .brand{max-width:62%}.summary-panel{margin:12px 0 15px}.layout{grid-template-columns:1fr;gap:15px}.layout>.panel{height:auto}.list-panel{max-height:min(var(--form-panel-height,75vh),75vh)}.panel-head,.main-panel-head{padding:18px}.form-body{padding:18px}.panel{border-radius:16px}}
 @media(max-width:480px){.hero:before,.hero:after{left:72%;opacity:.72}.hero .brand{max-width:68%}}
 @media(max-width:420px){.two-col{grid-template-columns:1fr;gap:0}.form-actions .btn{padding:11px 9px}.toolbar .btn{flex:1}.toolbar .btn-icon{flex:0 0 34px}}
 @media(max-width:680px){.setup-grid{grid-template-columns:1fr}.setup-card-wide{grid-column:auto}.setup-cost-layout{grid-template-columns:1fr}.setup-costs{grid-template-columns:1fr 1fr}}
@@ -169,7 +177,15 @@ footer{color:#8b98a8;font-size:11px;text-align:center;padding:20px 0 0}
           <p>Pencatatan perjalanan dinas & hitung komponen biaya otomatis.</p>
         </div>
       </div>
-      <div class="hero-badge"><span></span> Penyimpanan lokal aktif</div>
+      <div class="hero-controls">
+        <div class="hero-badge" aria-live="polite"><span class="status-dot" aria-hidden="true"></span><span id="cloudStatus">Publik</span></div>
+        <button class="btn btn-icon hero-auth-btn" id="adminLoginBtn" type="button" aria-label="Masuk admin" title="Masuk admin">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a6 6 0 0 1 6-6c2 0 3.8.9 4.9 2.3M19 8v6m3-3h-6"/></svg>
+        </button>
+        <button class="btn btn-icon hero-auth-btn" id="adminLogoutBtn" type="button" aria-label="Keluar admin" title="Keluar" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 17l5-5-5-5m5 5H3"/><path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7"/></svg>
+        </button>
+      </div>
     </div>
   </header>
 
@@ -263,19 +279,19 @@ footer{color:#8b98a8;font-size:11px;text-align:center;padding:20px 0 0}
           </div>
         </div>
         <div class="toolbar">
-          <button class="btn btn-icon" id="inputPanelToggle" type="button" aria-label="Sembunyikan panel input" aria-expanded="true" title="Sembunyikan panel input">
+          <button class="btn btn-icon admin-only" id="inputPanelToggle" type="button" aria-label="Sembunyikan panel input" aria-expanded="true" title="Sembunyikan panel input">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16m6-11-3 3 3 3"/></svg>
           </button>
-          <button class="btn btn-icon" id="resetDataToggle" type="button" aria-label="Tampilkan tombol tindakan" aria-expanded="false" title="Tampilkan tombol tindakan">
+          <button class="btn btn-icon admin-only" id="resetDataToggle" type="button" aria-label="Tampilkan tombol tindakan" aria-expanded="false" title="Tampilkan tombol tindakan">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg>
           </button>
-          <button class="btn btn-icon" id="setupBtn" type="button" aria-label="Pengaturan Setup" title="Pengaturan Setup" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Z"/><path d="m19.4 15 .1.1a1.7 1.7 0 1 1-2.4 2.4l-.1-.1a1.7 1.7 0 0 0-2.9 1.2v.2a1.7 1.7 0 1 1-3.4 0v-.2a1.7 1.7 0 0 0-2.9-1.2l-.1.1a1.7 1.7 0 1 1-2.4-2.4l.1-.1a1.7 1.7 0 0 0-1.2-2.9H4a1.7 1.7 0 1 1 0-3.4h.2a1.7 1.7 0 0 0 1.2-2.9l-.1-.1a1.7 1.7 0 1 1 2.4-2.4l.1.1a1.7 1.7 0 0 0 2.9-1.2V2a1.7 1.7 0 1 1 3.4 0v.2a1.7 1.7 0 0 0 2.9 1.2l.1-.1a1.7 1.7 0 1 1 2.4 2.4l-.1.1a1.7 1.7 0 0 0 1.2 2.9h.2a1.7 1.7 0 1 1 0 3.4h-.2a1.7 1.7 0 0 0-1.2 2.9Z"/></svg></button>
-          <button class="btn btn-danger" id="resetDataBtn" type="button" hidden>Reset Data</button>
-          <button class="btn btn-outline" id="importBtn" type="button" hidden>
+          <button class="btn btn-icon admin-only" id="setupBtn" type="button" aria-label="Pengaturan Setup" title="Pengaturan Setup" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Z"/><path d="m19.4 15 .1.1a1.7 1.7 0 1 1-2.4 2.4l-.1-.1a1.7 1.7 0 0 0-2.9 1.2v.2a1.7 1.7 0 1 1-3.4 0v-.2a1.7 1.7 0 0 0-2.9-1.2l-.1.1a1.7 1.7 0 1 1-2.4-2.4l.1-.1a1.7 1.7 0 0 0-1.2-2.9H4a1.7 1.7 0 1 1 0-3.4h.2a1.7 1.7 0 0 0 1.2-2.9l-.1-.1a1.7 1.7 0 1 1 2.4-2.4l.1.1a1.7 1.7 0 0 0 2.9-1.2V2a1.7 1.7 0 1 1 3.4 0v.2a1.7 1.7 0 0 0 2.9 1.2l.1-.1a1.7 1.7 0 1 1 2.4 2.4l-.1.1a1.7 1.7 0 0 0 1.2 2.9h.2a1.7 1.7 0 1 1 0 3.4h-.2a1.7 1.7 0 0 0-1.2 2.9Z"/></svg></button>
+          <button class="btn btn-danger admin-only" id="resetDataBtn" type="button" hidden>Reset Data</button>
+          <button class="btn btn-outline admin-only" id="importBtn" type="button" hidden>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5M12 3v12"/></svg>
             Import
           </button>
-          <div class="export-action" id="exportAction" hidden>
+          <div class="export-action" id="exportAction">
             <button class="btn btn-outline" id="exportBtn" type="button" aria-haspopup="menu" aria-controls="exportMenu" aria-expanded="false">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5M12 15V3"/></svg>
               Ekspor
@@ -304,7 +320,7 @@ footer{color:#8b98a8;font-size:11px;text-align:center;padding:20px 0 0}
               <th>BBM</th>
               <th>Sewa</th>
               <th>Total</th>
-              <th class="delete-col"><button class="btn btn-icon" id="tripActionsToggle" type="button" aria-label="Tampilkan tindakan" title="Tampilkan tindakan" aria-expanded="false"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg></button></th>
+              <th class="delete-col"><button class="btn btn-icon admin-only" id="tripActionsToggle" type="button" aria-label="Tampilkan tindakan" title="Tampilkan tindakan" aria-expanded="false"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg></button></th>
             </tr>
           </thead>
           <tbody id="tripRows"></tbody>
@@ -316,9 +332,12 @@ footer{color:#8b98a8;font-size:11px;text-align:center;padding:20px 0 0}
   <footer>Yoel Busax</footer>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+<dialog class="modal" id="adminLoginModal" aria-labelledby="adminLoginTitle">
+  <form id="adminLoginForm"><h2 id="adminLoginTitle">Masuk sebagai admin</h2><p class="panel-sub">Gunakan akun email admin yang sudah terdaftar di Firebase.</p><div class="editor-fields"><label class="editor-field">Email<input id="adminEmail" type="email" autocomplete="username" required></label><label class="editor-field">Kata sandi<input id="adminPassword" type="password" autocomplete="current-password" required></label></div><div class="modal-actions"><button class="btn btn-primary" type="submit">Masuk</button></div></form>
+</dialog>
 <dialog class="modal" id="resetDataModal" aria-labelledby="resetDataTitle" aria-describedby="resetDataMessage">
   <h2 id="resetDataTitle">Hapus semua data?</h2>
-  <p id="resetDataMessage">Semua perjalanan yang tersimpan di browser ini akan dihapus dan tidak dapat dipulihkan.</p>
+  <p id="resetDataMessage">Semua data perjalanan pada database online akan dihapus untuk semua pengguna dan tidak dapat dipulihkan.</p>
   <div class="modal-actions">
     <button class="btn btn-quiet" id="cancelResetData" type="button">Batal</button>
     <button class="btn btn-danger" id="confirmResetData" type="button">Ya, hapus semua</button>
@@ -381,6 +400,10 @@ footer{color:#8b98a8;font-size:11px;text-align:center;padding:20px 0 0}
   <form id="masterEditForm"><h2 id="masterEditTitle">Ubah data master</h2><div class="editor-fields" id="masterEditFields"></div><div class="modal-actions"><button class="btn btn-quiet" id="cancelMasterEdit" type="button">Batal</button><button class="btn btn-primary" type="submit">Simpan</button></div></form>
 </dialog>
 
+<script src="https://www.gstatic.com/firebasejs/12.18.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.18.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 <script>
 let EMPLOYEES = [
@@ -395,50 +418,126 @@ let EMPLOYEES = [
   { name: "Agato", role: "Petugas Sopir", incentive: 50000 }
 ];
 let OFFICES = [{"name":"Sosok","distance":0},{"name":"Ngabang","distance":40},{"name":"Kembayan","distance":45},{"name":"Bodok","distance":28},{"name":"Tayan","distance":50},{"name":"Sanggau","distance":50},{"name":"Semuntai","distance":69},{"name":"Sekadau","distance":100},{"name":"Engkolai","distance":85},{"name":"Entikong","distance":99},{"name":"Erna","distance":66},{"name":"Batang Tarang","distance":25},{"name":"Noyan","distance":112},{"name":"Balai Karangan","distance":80},{"name":"Nanga Biang","distance":88},{"name":"Toba","distance":85},{"name":"Salatiga","distance":113},{"name":"Meliau","distance":70},{"name":"Nanga Mahap","distance":152},{"name":"Senakin","distance":110},{"name":"Kubu Raya","distance":150},{"name":"Pintas Keladan","distance":154},{"name":"Terentang","distance":233},{"name":"Penyalimau","distance":67},{"name":"Jelimpo","distance":18},{"name":"Batu Layang","distance":150},{"name":"Kota Baru","distance":150},{"name":"Sanjan Emberas","distance":23},{"name":"Sekabuk","distance":184},{"name":"Sintang","distance":180},{"name":"Singkawang","distance":275},{"name":"Bengkayang","distance":150},{"name":"Balai Berkuak","distance":134},{"name":"Pahauman","distance":78},{"name":"Malenggang","distance":121},{"name":"Gunung Tamang","distance":125},{"name":"Inti Tiga","distance":30},{"name":"Trans I BHD","distance":86},{"name":"Beduai","distance":65},{"name":"Balai Sebut","distance":100},{"name":"Rawak","distance":120},{"name":"Berakak","distance":25},{"name":"Kuala Behe","distance":73},{"name":"Simpang Sp. V Jangkang","distance":120},{"name":"Terentang Darat","distance":65},{"name":"Karangan","distance":195},{"name":"Simpang Dua","distance":182},{"name":"Anik","distance":108},{"name":"Sanggau Ledo","distance":210},{"name":"Nahaya","distance":80},{"name":"Batu Buil","distance":277},{"name":"Nanga Tayap","distance":286},{"name":"Binua Sangku","distance":37},{"name":"Serimbu","distance":97},{"name":"Meranti","distance":138},{"name":"Anjongan","distance":153},{"name":"Monterado","distance":265},{"name":"Capkala","distance":238},{"name":"Binua Samih","distance":123},{"name":"Ledo","distance":193},{"name":"Jagoi Babang","distance":260},{"name":"Aruk","distance":320},{"name":"Simpang Tiga","distance":125},{"name":"Merimbang Jaya","distance":237},{"name":"Sandai","distance":246},{"name":"SP 1 landau Kodah","distance":123},{"name":"SP Empat Kayu Lapis","distance":116},{"name":"SP II Sungai Maboh","distance":158},{"name":"Nanga Taman","distance":138},{"name":"Manis Raya","distance":144}];
-const STORAGE_KEY = "rekap-perjalanan-dinas-v1";
-const MASTER_STORAGE_KEY = "rekap-perjalanan-dinas-master-v1";
 const DEFAULT_COSTS = { meal:30000, motorFuelRate:1500, carFuelRate:3000, motorRental:35000, carRental:70000 };
 const DEFAULT_INCENTIVES_BY_ROLE = { "Head Department":30000, "Head Division":25000, "Staff":20000, "Karyawan Kontrak":0, "Petugas Sopir":50000 };
 let costsConfig = {...DEFAULT_COSTS, incentiveByRole:{...DEFAULT_INCENTIVES_BY_ROLE}};
 const rupiah = new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 });
 const $ = id => document.getElementById(id);
-loadMasterData();
-let trips = loadTrips();
+let trips = [];
+let cloudDb = null;
+let cloudAuth = null;
+let cloudReady = false;
+let cloudSettingsLoaded = false;
+let cloudTripsLoaded = false;
+let isAdmin = false;
+let currentCloudUser = null;
+let persistedTripsById = new Map();
+let tripWriteQueue = Promise.resolve();
+let cloudSettingsUnsubscribe = null;
+let cloudTripsUnsubscribe = null;
 
-function loadMasterData(){
-  try{
-    const saved = JSON.parse(localStorage.getItem(MASTER_STORAGE_KEY) || "null");
-    if(!saved) return;
-    if(Array.isArray(saved.employees) && saved.employees.every(item=>item && item.name && item.role)) EMPLOYEES = saved.employees.map(({name,role})=>({name,role}));
-    if(Array.isArray(saved.offices) && saved.offices.every(item=>item && item.name && Number.isFinite(Number(item.distance)))) OFFICES = saved.offices;
-    if(saved.costs){
-      const baseCosts = {...DEFAULT_COSTS};
-      for(const key of Object.keys(DEFAULT_COSTS)) if(Number.isFinite(Number(saved.costs[key]))) baseCosts[key] = Number(saved.costs[key]);
-      let incentiveByRole = {...DEFAULT_INCENTIVES_BY_ROLE};
-      if(saved.costs.incentiveByRole && typeof saved.costs.incentiveByRole === "object"){
-        for(const [role,value] of Object.entries(saved.costs.incentiveByRole)) if(Number.isFinite(Number(value))) incentiveByRole[role] = Number(value);
-      }else{
-        for(const employee of saved.employees || []) if(employee && employee.role && Number.isFinite(Number(employee.incentive))) incentiveByRole[employee.role] = Number(employee.incentive);
-        if(Number.isFinite(Number(saved.costs.driverIncentive))) incentiveByRole["Petugas Sopir"] = Number(saved.costs.driverIncentive);
-      }
-      costsConfig = {...baseCosts,incentiveByRole};
+function applyCloudSettings(saved){
+  if(Array.isArray(saved.employees) && saved.employees.every(item=>item && item.name && item.role)) EMPLOYEES = saved.employees.map(({name,role})=>({name,role}));
+  if(Array.isArray(saved.offices) && saved.offices.every(item=>item && item.name && Number.isFinite(Number(item.distance)))) OFFICES = saved.offices;
+  if(saved.costs){
+    const baseCosts = {...DEFAULT_COSTS};
+    for(const key of Object.keys(DEFAULT_COSTS)) if(Number.isFinite(Number(saved.costs[key]))) baseCosts[key] = Number(saved.costs[key]);
+    const incentiveByRole = {...DEFAULT_INCENTIVES_BY_ROLE};
+    if(saved.costs.incentiveByRole && typeof saved.costs.incentiveByRole === "object"){
+      for(const [role,value] of Object.entries(saved.costs.incentiveByRole)) if(Number.isFinite(Number(value))) incentiveByRole[role] = Number(value);
     }
-  }catch(e){ console.warn("Data Setup tidak dapat dibaca; menggunakan nilai bawaan.",e); }
+    costsConfig = {...baseCosts,incentiveByRole};
+  }
+  populateLists(); renderSetup(); updateName(); updateOffice(); calculatePreview(); renderTrips();
 }
 function saveMasterData(){
-  try{ localStorage.setItem(MASTER_STORAGE_KEY,JSON.stringify({employees:EMPLOYEES.map(({name,role})=>({name,role})),offices:OFFICES,costs:costsConfig})); }
-  catch(e){ notify("Setup gagal disimpan. Periksa kapasitas penyimpanan browser."); }
-}
-
-function loadTrips(){
-  try{
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-    return Array.isArray(saved) ? saved : [];
-  }catch(e){ return []; }
+  if(!isAdmin || !cloudDb || !cloudSettingsLoaded){ notify("Tunggu database selesai dimuat dan masuk sebagai admin."); return Promise.resolve(); }
+  const data = {employees:EMPLOYEES.map(({name,role})=>({name,role})),offices:OFFICES,costs:costsConfig};
+  return cloudDb.collection("app").doc("settings").set(data).catch(error=>{ notify("Setup gagal disimpan ke database."); console.error(error); });
 }
 function saveTrips(){
-  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(trips)); }
-  catch(e){ notify("Penyimpanan browser penuh atau tidak tersedia. Ekspor XLSX sebagai cadangan."); }
+  if(!isAdmin || !cloudDb || !cloudTripsLoaded){ notify("Tunggu database selesai dimuat dan masuk sebagai admin."); return Promise.resolve(); }
+  const nextTrips = trips.map(item=>({...item,id:String(item.id)}));
+  tripWriteQueue = tripWriteQueue.then(async()=>{
+    const nextById = new Map(nextTrips.map(item=>[item.id,item]));
+    const changes = [];
+    for(const id of persistedTripsById.keys()) if(!nextById.has(id)) changes.push({type:"delete",id});
+    for(const [id,item] of nextById){
+      const previous = persistedTripsById.get(id);
+      if(!previous || stableTripJSON(previous) !== stableTripJSON(item)) changes.push({type:"set",id,item});
+    }
+    for(let offset=0;offset<changes.length;offset+=450){
+      const batch = cloudDb.batch();
+      for(const change of changes.slice(offset,offset+450)){
+        const ref = cloudDb.collection("trips").doc(change.id);
+        if(change.type === "delete") batch.delete(ref); else batch.set(ref,change.item);
+      }
+      await batch.commit();
+    }
+    persistedTripsById = nextById;
+    return true;
+  }).catch(error=>{
+    notify("Data gagal disimpan ke database. Periksa koneksi atau akses admin.");
+    console.error(error);
+    trips = [...persistedTripsById.values()];
+    renderTrips();
+    return false;
+  });
+  return tripWriteQueue;
+}
+function stableTripJSON(item){ return JSON.stringify(Object.keys(item).sort().map(key=>[key,item[key]])); }
+function setCloudStatus(text){ if($("cloudStatus")) $("cloudStatus").textContent = text; }
+function applyAccess(){
+  document.body.classList.toggle("public-mode",!isAdmin);
+  document.body.classList.toggle("cloud-loading",!cloudReady || !cloudSettingsLoaded || !cloudTripsLoaded);
+  document.querySelectorAll(".admin-only").forEach(element=>element.hidden = !isAdmin);
+  $("adminLoginBtn").hidden = isAdmin;
+  $("adminLogoutBtn").hidden = !isAdmin;
+  if(isAdmin){
+    const actionsOpen = $("resetDataToggle").getAttribute("aria-expanded") === "true";
+    ["setupBtn","resetDataBtn","importBtn"].forEach(id=>$(id).hidden = !actionsOpen);
+    document.querySelectorAll(".row-actions").forEach(actions=>actions.hidden = $("tripActionsToggle").getAttribute("aria-expanded") !== "true");
+    setCloudStatus("Admin");
+  }else{
+    document.querySelectorAll(".row-actions").forEach(actions=>actions.hidden = true);
+    setCloudStatus("Publik");
+  }
+}
+function initCloud(){
+  isAdmin = false;
+  applyAccess();
+  const config = window.APP_FIREBASE_CONFIG || {};
+  const adminUid = String(window.APP_ADMIN_UID || "").trim();
+  if(!config.apiKey || !config.projectId || !config.appId || !adminUid || /ISI_|GANTI_/i.test(JSON.stringify(config)+adminUid)){
+    notify("Lengkapi konfigurasi Firebase dan UID admin pada firebase-config.js sebelum deploy.");
+    return;
+  }
+  try{
+    firebase.initializeApp(config);
+    cloudAuth = firebase.auth();
+    cloudDb = firebase.firestore();
+    cloudReady = true;
+    cloudSettingsUnsubscribe = cloudDb.collection("app").doc("settings").onSnapshot(snapshot=>{
+      cloudSettingsLoaded = true;
+      if(snapshot.exists) applyCloudSettings(snapshot.data());
+      else { populateLists(); renderSetup(); calculatePreview(); }
+      applyAccess();
+      setCloudStatus(isAdmin ? "Admin" : "Publik");
+    },error=>{ notify("Tidak dapat membaca data setup dari Firebase."); console.error(error); });
+    cloudTripsUnsubscribe = cloudDb.collection("trips").onSnapshot(snapshot=>{
+      cloudTripsLoaded = true;
+      persistedTripsById = new Map(snapshot.docs.map(doc=>[doc.id,{...doc.data(),id:doc.id}]));
+      trips = [...persistedTripsById.values()];
+      renderTrips();
+      applyAccess();
+    },error=>{ notify("Tidak dapat membaca data perjalanan dari Firebase."); console.error(error); });
+    cloudAuth.onAuthStateChanged(user=>{
+      currentCloudUser = user;
+      isAdmin = Boolean(user && user.uid === adminUid);
+      if(user && !isAdmin){ cloudAuth.signOut(); notify("Akun ini tidak terdaftar sebagai admin aplikasi."); }
+      applyAccess();
+    });
+  }catch(error){ notify("Konfigurasi Firebase tidak valid."); console.error(error); }
 }
 function norm(value){
   return String(value || "").toLocaleLowerCase("id-ID").replace(/[.,]/g,"").replace(/\s+/g," ").trim();
@@ -628,6 +727,7 @@ function validateForm(){
 }
 function addTrip(event){
   event.preventDefault();
+  if(!isAdmin){ notify("Masuk sebagai admin untuk menambah data."); return; }
   if(!validateForm()) return;
   const costs = computeCosts();
   const time = costs.driver && costs.vehicle === "Jam Pulang" ? $("jamPulang").value.trim() : "";
@@ -640,7 +740,7 @@ function addTrip(event){
     meal: costs.meal, fuel: costs.fuel, rental: costs.rental, total: costs.total
   };
   trips.unshift(row);
-  saveTrips();
+  void saveTrips();
   renderTrips();
   $("tripForm").reset();
   $("tanggal").value = isoToDateInput(localISODate());
@@ -709,19 +809,21 @@ function renderTrips(){
     </tr>`).join("");
 }
 function deleteTrip(id){
+  if(!isAdmin) return;
   const entry = trips.find(item => item.id === id);
   if(!entry) return;
   if(!window.confirm(`Hapus rekap perjalanan ${entry.name} ke ${entry.office}?`)) return;
   trips = trips.filter(item => item.id !== id);
-  saveTrips(); renderTrips(); notify("Data perjalanan dihapus.");
+  void saveTrips(); renderTrips(); notify("Data perjalanan dihapus.");
 }
 function markMealWithReceipt(id){
+  if(!isAdmin) return;
   const trip = trips.find(item=>item.id === id);
   if(!trip) return;
   if(Number(trip.meal || 0) === 0){ notify("Uang Makan perjalanan ini sudah Rp 0."); return; }
   trip.total = Number(trip.total || 0) - Number(trip.meal || 0);
   trip.meal = 0;
-  saveTrips(); renderTrips(); notify(`Uang Makan ${trip.name} menjadi Rp 0 (Makan dengan nota).`);
+  void saveTrips(); renderTrips(); notify(`Uang Makan ${trip.name} menjadi Rp 0 (Makan dengan nota).`);
 }
 const XLSX_HEADERS = ["Tanggal","Nama","Jabatan","Kantor","Jarak (KM)","Kendaraan / Status","Insentif","Uang Makan","Uang BBM","Sewa Kendaraan","Total"];
 function formatXLSXDate(iso){
@@ -779,6 +881,7 @@ function xlsxDateToISO(value){
 }
 async function importXLSX(file){
   if(!file) return;
+  if(!isAdmin){ notify("Masuk sebagai admin untuk mengimpor data."); return; }
   if(!/\.xlsx$/i.test(file.name)){ notify("Pilih file berformat .xlsx."); return; }
   if(!window.XLSX){ notify("Fitur XLSX tidak tersedia. Periksa koneksi internet lalu muat ulang halaman."); return; }
   try{
@@ -825,7 +928,7 @@ async function importXLSX(file){
     }
     if(!imported.length){ notify("Tidak ada data perjalanan pada file tersebut."); return; }
     trips = [...trips,...imported];
-    saveTrips(); renderTrips();
+    await saveTrips(); renderTrips();
     notify(`${imported.length} perjalanan berhasil diimpor.`);
   }catch(error){
     notify(error.message || "File XLSX tidak dapat dibaca.");
@@ -849,14 +952,41 @@ function resetForm(){
   $("tanggal").focus();
 }
 function resetAllTrips(){
+  if(!isAdmin) return;
   trips = [];
-  saveTrips();
-  renderTrips();
-  $("resetDataModal").close();
-  $("tanggal").focus();
-  notify("Semua data perjalanan telah dihapus.");
+  saveTrips().then(saved=>{
+    if(!saved) return;
+    renderTrips();
+    $("resetDataModal").close();
+    $("tanggal").focus();
+    notify("Semua data perjalanan telah dihapus dari database.");
+  });
 }
 
+$("adminLoginBtn").addEventListener("click",()=>{
+  if(!cloudReady){ notify("Firebase belum dikonfigurasi."); return; }
+  $("adminLoginModal").showModal(); $("adminEmail").focus();
+});
+$("adminLoginModal").addEventListener("click",event=>{
+  if(event.target === $("adminLoginModal")) $("adminLoginModal").close();
+});
+$("adminLoginModal").addEventListener("close",()=>{
+  if(!isAdmin){ $("adminEmail").value=""; $("adminPassword").value=""; }
+});
+$("adminLoginForm").addEventListener("submit",async event=>{
+  event.preventDefault();
+  if(!cloudReady || !cloudAuth){ notify("Firebase belum terhubung."); return; }
+  const submitButton=event.currentTarget.querySelector('[type="submit"]');
+  submitButton.disabled=true;
+  try{
+    await cloudAuth.signInWithEmailAndPassword($("adminEmail").value.trim(),$("adminPassword").value);
+    $("adminLoginModal").close(); $("adminPassword").value="";
+  }catch(error){
+    notify(error.code === "auth/invalid-credential" || error.code === "auth/wrong-password" ? "Email atau kata sandi tidak sesuai." : "Login admin gagal. Periksa email, kata sandi, dan konfigurasi Firebase.");
+    console.error(error);
+  }finally{ submitButton.disabled=false; }
+});
+$("adminLogoutBtn").addEventListener("click",async()=>{ if(cloudAuth) await cloudAuth.signOut(); });
 $("nama").addEventListener("input",updateName);
 $("nama").addEventListener("change",()=>{
   const emp=findEmployee($("nama").value);
@@ -995,6 +1125,7 @@ if("ResizeObserver" in window){
 }else{
   window.addEventListener("resize",syncListPanelHeight);
 }
+initCloud();
 </script>
 </body>
 </html>
