@@ -1,0 +1,1117 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#14532d">
+<title>Rekap Perjalanan Dinas</title>
+<style>
+:root{
+  --ink:#12263a;--muted:#64748b;--line:#e2e8f0;--paper:#ffffff;--canvas:#f3f6fa;
+  --navy:#102a43;--navy2:#173f5f;--teal:#0f766e;--teal-light:#e7f7f3;
+  --blue-light:#edf4ff;--amber-light:#fff7e8;--shadow:0 12px 34px rgba(15,35,55,.07);
+  --radius:18px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--canvas);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:14px;line-height:1.45}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.app-shell{max-width:1440px;margin:0 auto;padding:24px clamp(14px,3vw,36px) 40px}
+.hero{background:#fff;border:1px solid #e4eaf0;border-radius:20px;padding:25px 30px;min-height:150px;color:var(--ink);position:relative;overflow:hidden;box-shadow:var(--shadow)}
+.hero:before{content:"";position:absolute;inset:0 0 0 43%;background:linear-gradient(116deg,transparent 0 18%,rgba(216,255,225,.62) 18.3% 31%,transparent 31.3% 100%),linear-gradient(116deg,transparent 0 40%,rgba(76,175,105,.56) 40.3% 55%,transparent 55.3% 100%),linear-gradient(116deg,transparent 0 65%,rgba(19,94,51,.38) 65.3% 80%,transparent 80.3% 100%),linear-gradient(112deg,#b7e4c7 0%,#74c69d 28%,#2d9b62 58%,#14532d 100%);clip-path:polygon(17% 0,100% 0,100% 100%,0 100%)}
+.hero:after{content:"";position:absolute;inset:0 0 0 43%;clip-path:polygon(17% 0,100% 0,100% 100%,0 100%);background:repeating-linear-gradient(119deg,transparent 0 48px,rgba(255,255,255,.18) 49px 51px,transparent 52px 91px);pointer-events:none}
+.hero-top{display:flex;align-items:center;justify-content:space-between;gap:20px;position:relative;z-index:1}
+.brand{display:flex;align-items:center;gap:0;min-width:0}
+.brand-copy{position:relative;z-index:1}
+.eyebrow{text-transform:uppercase;letter-spacing:.14em;font-size:10px;font-weight:800;color:#34764d;margin-bottom:4px}
+h1{font-size:clamp(23px,3vw,32px);letter-spacing:-.035em;line-height:1.15;margin:0;font-weight:760}
+.hero p{color:#617287;max-width:670px;margin:12px 0 0;position:relative;z-index:1}
+.hero-badge{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:999px;background:rgba(12,65,35,.35);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:12px;font-weight:650;white-space:nowrap}
+.hero-badge span{width:7px;height:7px;border-radius:50%;background:#c8f2d1;box-shadow:0 0 0 4px rgba(200,242,209,.18)}
+.summary-panel{margin:18px 0 22px;overflow:hidden}
+.summary-panel .panel-head{padding-bottom:14px}
+.summary-panel.collapsed .summary-table-wrap{display:none}
+.summary-table-wrap{overflow:auto}
+.summary-table{min-width:740px}
+.summary-table th,.summary-table td{padding:10px 14px}
+.summary-empty{padding:20px 22px;color:var(--muted);font-size:12px}
+.layout{display:grid;grid-template-columns:minmax(320px,400px) minmax(0,1fr);gap:20px;align-items:start}
+.layout.input-collapsed{grid-template-columns:minmax(0,1fr)}
+.layout.input-collapsed .form-panel{display:none}
+.panel{background:var(--paper);border:1px solid #e6ecf2;border-radius:var(--radius);box-shadow:var(--shadow);min-width:0}
+.layout>.panel{min-height:0}
+.list-panel{display:flex;flex-direction:column;min-height:0;max-height:var(--form-panel-height,none)}
+.list-panel .table-wrap{flex:1;min-height:0}
+.panel-head{padding:22px 23px 15px;border-bottom:1px solid #edf1f5}
+.panel-title-row{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.panel h2{font-size:17px;margin:0;letter-spacing:-.02em}
+.panel-sub{color:var(--muted);font-size:12px;margin:5px 0 0}
+.step-tag{background:#f0fdfa;border:1px solid #ccfbf1;color:#0f766e;border-radius:8px;padding:5px 8px;font-size:10px;font-weight:800;letter-spacing:.05em}
+.form-body{padding:20px 23px 22px}
+.field{margin-bottom:16px;min-width:0}
+.field label{display:flex;align-items:center;gap:6px;color:#334155;font-size:12px;font-weight:750;margin-bottom:7px}
+.required{color:#d94645}
+.field input,.field select{width:100%;height:43px;border:1px solid #d9e2ec;border-radius:10px;background:#fff;color:#142b40;padding:0 12px;outline:none;transition:border .15s,box-shadow .15s;min-width:0}
+.field input:focus,.field select:focus{border-color:#0f9488;box-shadow:0 0 0 3px rgba(15,148,136,.12)}
+.field input[readonly]{background:#f6f8fb;color:#52657a}
+.field input::placeholder{color:#a0adba}
+.field-hint{color:#8795a5;font-size:11px;margin:6px 0 0}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.conditional{display:none}
+.conditional.show{display:block}
+.divider{border:0;border-top:1px solid #eef2f6;margin:19px 0}
+.preview-title{font-size:12px;font-weight:800;color:#42556a;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.preview-item{padding:10px 11px;background:#f7f9fc;border:1px solid #edf1f5;border-radius:10px;min-width:0}
+.preview-item span{display:block;color:#78879a;font-size:10px;font-weight:650}
+.preview-item strong{display:block;color:#20374b;font-size:14px;margin-top:3px;overflow-wrap:anywhere}
+.preview-item.total{grid-column:1/-1;background:var(--teal-light);border-color:#c7eee6}
+.preview-item.total strong{color:#086b61;font-size:21px}
+.form-actions{display:flex;gap:9px;margin-top:18px}
+.btn{border:0;border-radius:10px;padding:11px 14px;font-size:12px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:transform .12s,background .12s;white-space:nowrap}
+.btn:active{transform:translateY(1px)}
+.btn-primary{flex:1;background:var(--teal);color:white;box-shadow:0 5px 13px rgba(15,118,110,.18)}
+.btn-primary:hover{background:#0b645d}
+.btn-quiet{background:#f1f5f9;color:#52657a}
+.btn-quiet:hover{background:#e6edf4}
+.btn-outline{background:#fff;color:#30485e;border:1px solid #dbe4ec}
+.btn svg{width:15px;height:15px}
+.main-panel-head{padding:22px 23px 17px;display:flex;justify-content:space-between;align-items:center;gap:18px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.toolbar [hidden]{display:none!important}
+.export-action{position:relative}
+.export-menu{position:absolute;top:calc(100% + 7px);right:0;z-index:25;display:grid;gap:4px;min-width:190px;padding:6px;background:#fff;border:1px solid #e2e8f0;border-radius:11px;box-shadow:0 12px 28px rgba(15,35,55,.16)}
+.export-menu[hidden]{display:none!important}
+.export-choice{border:0;background:transparent;color:#30485e;text-align:left;padding:9px 10px;border-radius:7px;font-size:12px;font-weight:700}
+.export-choice:hover,.export-choice:focus-visible{background:#edf4ff;outline:0}
+.btn-icon{width:34px;height:34px;padding:0;background:#f1f5f9;color:#52657a;border-radius:9px}
+.btn-icon svg{width:17px;height:17px}
+.table-wrap{overflow:auto;border-top:1px solid #edf1f5;flex:1;min-height:0}
+table{width:100%;border-collapse:separate;border-spacing:0;white-space:nowrap;font-size:12px}
+thead th{background:#f8fafc;color:#67788a;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.055em;font-weight:800;padding:13px 14px;border-bottom:1px solid #e8edf2}
+tbody td{padding:14px;border-bottom:1px solid #eff3f6;color:#344a5f;vertical-align:middle}
+tbody tr:hover{background:#fbfdff}
+tbody tr:last-child td{border-bottom:0}
+.person-cell{font-weight:750;color:#182f44;max-width:205px;overflow:hidden;text-overflow:ellipsis}
+.mini-muted{font-size:10px;color:#8190a0;margin-top:3px}
+.pill{display:inline-flex;align-items:center;padding:5px 8px;border-radius:7px;background:#f0f4f8;color:#52677a;font-weight:750;font-size:10px}
+.money{font-variant-numeric:tabular-nums;font-weight:700}
+.money-total{color:#08776b;font-weight:850}
+.delete-btn{width:30px;height:30px;display:grid;place-items:center;background:transparent;border:1px solid transparent;border-radius:8px;color:#92a0af}
+.delete-btn:hover{background:#fff1f2;border-color:#ffe4e6;color:#be123c}
+.delete-btn svg{width:15px;height:15px}
+.row-actions{display:flex;justify-content:center;gap:4px}
+.row-actions[hidden]{display:none}
+.receipt-btn{color:var(--teal)}
+.receipt-btn:hover{background:#e7f7f3;border-color:#c7eee6;color:#0b645d}
+.modal.setup-dialog{width:min(96vw,980px);max-height:90vh;overflow:auto}
+.setup-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px}
+.setup-card{border:1px solid #e5ebf1;border-radius:12px;padding:14px;min-width:0}
+.setup-card h3{font-size:14px;margin:0 0 10px}
+.setup-card-wide{grid-column:1/-1}
+.setup-table-wrap{max-height:230px;overflow:auto;margin-top:10px}
+.setup-table{min-width:100%;white-space:nowrap}
+.setup-table th,.setup-table td{padding:8px;font-size:11px}
+.setup-form{display:flex;gap:8px;align-items:end;flex-wrap:wrap}
+.setup-form .btn-primary{flex:0 0 auto}
+.setup-form label,.editor-field label{display:grid;gap:5px;color:#52657a;font-size:11px;font-weight:700;flex:1;min-width:130px}
+.setup-form input,.editor-field input,.editor-field select{height:36px;border:1px solid #d9e2ec;border-radius:8px;padding:0 9px;min-width:0;width:100%;color:var(--ink)}
+.setup-cost-layout{display:grid;grid-template-columns:minmax(240px,.85fr) minmax(360px,1.4fr);gap:16px}
+.setup-subcard{background:#f8fafc;border:1px solid #e8edf2;border-radius:10px;padding:14px;min-width:0}
+.setup-subcard h4{font-size:12px;margin:0;color:#334155}
+.setup-subcard p{font-size:11px;color:var(--muted);margin:4px 0 12px}
+.role-incentives{display:grid;gap:9px}
+.role-incentive-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(112px,.65fr);align-items:center;gap:12px;font-size:11px;color:#52657a}
+.role-incentive-row input,.setup-costs input{height:38px;border:1px solid #d9e2ec;border-radius:8px;padding:0 10px;min-width:0;width:100%;color:var(--ink)}
+.setup-costs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.setup-costs label{display:grid;gap:5px;font-size:11px;color:#52657a;font-weight:700}
+.cost-save-row{display:flex;justify-content:flex-end;margin-top:14px}
+.setup-actions{display:flex;gap:4px}
+.setup-actions .btn{padding:6px 8px;font-size:10px}
+.editor-fields{display:grid;gap:12px;margin-top:16px}
+.empty{padding:52px 18px;text-align:center;color:#76869a}
+.empty-icon{margin:0 auto 13px;width:50px;height:50px;display:grid;place-items:center;border-radius:16px;background:#f2f6fa;color:#8293a7}
+.empty-icon svg{width:23px;height:23px}
+.empty strong{display:block;color:#3b5065;font-size:13px}
+.empty p{font-size:12px;max-width:260px;margin:6px auto 0;line-height:1.6}
+.list-foot{display:flex;justify-content:space-between;align-items:center;gap:15px;padding:13px 22px;border-top:1px solid #edf1f5;color:#8290a0;font-size:11px}
+.toast{position:fixed;right:20px;bottom:20px;z-index:20;background:#122f44;color:white;padding:12px 16px;border-radius:12px;box-shadow:0 12px 32px rgba(14,35,55,.2);font-size:12px;font-weight:700;opacity:0;transform:translateY(8px);pointer-events:none;transition:.22s;max-width:min(88vw,420px)}
+.toast.show{opacity:1;transform:translateY(0)}
+.modal{width:min(92vw,420px);border:1px solid #e2e8f0;border-radius:16px;padding:22px;color:var(--ink);box-shadow:0 24px 70px rgba(15,35,55,.25)}
+.modal::backdrop{background:rgba(15,35,55,.48);backdrop-filter:blur(2px)}
+.modal h2{font-size:18px;margin:0 0 8px}
+.modal p{color:var(--muted);font-size:13px;line-height:1.5;margin:0}
+.modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:20px}
+.btn-danger{background:#be123c;color:white}
+.btn-danger:hover{background:#9f1239}
+.public-mode .form-panel{display:none}
+.public-mode .layout{grid-template-columns:minmax(0,1fr)}
+.public-mode .delete-col{display:none}
+.cloud-loading .layout{opacity:.65;pointer-events:none}
+.field-error{color:#c2413b;font-size:11px;margin-top:6px;display:none}
+.field-error.show{display:block}
+footer{color:#8b98a8;font-size:11px;text-align:center;padding:20px 0 0}
+@media(max-width:1050px){.layout{grid-template-columns:minmax(280px,360px) minmax(0,1fr)}.main-panel-head{flex-direction:column}.toolbar{justify-content:flex-start}}
+@media(max-width:800px){.app-shell{padding:14px 12px 28px}.hero{padding:23px 20px;border-radius:20px}.hero:before,.hero:after{left:64%}.hero-top{align-items:flex-start}.hero-badge{display:none}.hero p{max-width:100%}.hero .brand{max-width:62%}.summary-panel{margin:12px 0 15px}.layout{grid-template-columns:1fr;gap:15px}.layout>.panel{height:auto}.list-panel{max-height:min(var(--form-panel-height,75vh),75vh)}.panel-head,.main-panel-head{padding:18px}.form-body{padding:18px}.panel{border-radius:16px}}
+@media(max-width:480px){.hero:before,.hero:after{left:72%;opacity:.72}.hero .brand{max-width:68%}}
+@media(max-width:420px){.two-col{grid-template-columns:1fr;gap:0}.form-actions .btn{padding:11px 9px}.toolbar .btn{flex:1}.toolbar .btn-icon{flex:0 0 34px}}
+@media(max-width:680px){.setup-grid{grid-template-columns:1fr}.setup-card-wide{grid-column:auto}.setup-cost-layout{grid-template-columns:1fr}.setup-costs{grid-template-columns:1fr 1fr}}
+@media(max-width:420px){.setup-costs{grid-template-columns:1fr}.role-incentive-row{grid-template-columns:minmax(0,1fr) 112px}}
+@media print{
+  body{background:#fff;font-size:10px}.app-shell{max-width:none;padding:0}.hero{background:#fff;color:#111;padding:0 0 15px;border-radius:0;box-shadow:none;border-bottom:2px solid #183c50}.hero p,.hero-badge{display:none}.eyebrow{color:#666;opacity:1}h1{color:#111;font-size:22px}.layout{display:block}.form-panel,.toolbar,.delete-col,.list-foot,footer{display:none!important}.panel{box-shadow:none;border:1px solid #ddd;border-radius:8px}.main-panel-head{padding:12px}.table-wrap{overflow:visible}table{font-size:9px;white-space:normal}thead th,tbody td{padding:7px 6px}.person-cell{max-width:none}.pill{padding:3px 5px}.main-panel-head{display:block}.panel-sub{margin-top:4px}
+}
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <header class="hero">
+    <div class="hero-top">
+      <div class="brand">
+        <div class="brand-copy">
+          <div class="eyebrow">Departemen &middot; Teknologi Informasi</div>
+          <h1>Rekap Perjalanan Dinas</h1>
+          <p>Pencatatan perjalanan dinas & hitung komponen biaya otomatis.</p>
+        </div>
+      </div>
+      <div class="hero-badge"><span></span> <span id="cloudStatus">Menghubungkan database…</span></div>
+    </div>
+  </header>
+
+  <section class="panel summary-panel collapsed" aria-label="Ringkasan per nama">
+    <div class="panel-head">
+      <div class="panel-title-row">
+        <div>
+          <h2>Ringkasan</h2>
+          <p class="panel-sub">Total PKB diurutkan dari yang tertinggi.</p>
+        </div>
+        <button class="btn btn-icon" id="summaryToggle" type="button" aria-label="Tampilkan ringkasan" aria-expanded="false" title="Tampilkan ringkasan">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="summary-table-wrap">
+      <table class="summary-table">
+        <thead><tr><th>Nama</th><th>JLH</th><th>Insentif</th><th>Uang Makan</th><th>Uang BBM</th><th>Sewa Kendaraan</th><th>Total</th></tr></thead>
+        <tbody id="summaryRows"></tbody>
+      </table>
+      <div class="summary-empty" id="summaryEmpty">Belum ada perjalanan.</div>
+    </div>
+  </section>
+
+  <main class="layout" id="layout">
+    <section class="panel form-panel">
+      <div class="panel-head">
+        <div class="panel-title-row">
+          <h2>Input perjalanan dinas</h2>
+        </div>
+      </div>
+      <form id="tripForm" class="form-body" autocomplete="off">
+        <div class="field">
+          <label for="tanggal">Tanggal perjalanan <span class="required">*</span></label>
+          <input id="tanggal" name="tanggal" type="text" inputmode="numeric" placeholder="DD/MM/YYYY" maxlength="10" pattern="(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/[0-9]{4}" title="Masukkan tanggal dengan format DD/MM/YYYY" required>
+          <div class="field-hint" id="tanggalPreview">Format: Hari, DD/MM/YYYY</div>
+        </div>
+        <div class="field">
+          <label for="nama">Nama <span class="required">*</span></label>
+          <input id="nama" name="nama" type="text" autocomplete="on" list="namaList" placeholder="Mulai ketik nama pegawai..." required>
+          <datalist id="namaList"></datalist>
+          <div class="field-hint" id="jabatanPreview">Jabatan otomatis</div>
+          <div class="field-error" id="namaError">Pilih nama yang terdaftar pada daftar pegawai.</div>
+        </div>
+        <div class="field">
+          <label for="kantor">Kantor tujuan <span class="required">*</span></label>
+          <input id="kantor" name="kantor" type="text" autocomplete="on" list="kantorList" placeholder="Mulai ketik nama kantor..." required>
+          <div class="field-hint" id="jarakLabel">Jarak kantor otomatis</div>
+          <datalist id="kantorList"></datalist>
+          <div class="field-error" id="kantorError">Pilih kantor yang tersedia di daftar Kantor & Jarak.</div>
+        </div>
+        <div class="field">
+          <label for="kendaraan">Kendaraan / status sopir <span class="required">*</span></label>
+          <select id="kendaraan" name="kendaraan" required>
+            <option value="">Pilih kendaraan...</option>
+            <option value="Kantor">Kantor</option>
+            <option value="Motor Pribadi">Motor Pribadi</option>
+            <option value="Mobil Pribadi">Mobil Pribadi</option>
+          </select>
+        </div>
+        <div class="field conditional" id="jamWrap">
+          <label for="jamPulang">Jam pulang <span class="required">*</span></label>
+          <input id="jamPulang" name="jamPulang" type="text" inputmode="numeric" placeholder="14.50" maxlength="5">
+          <div class="field-hint">Gunakan format HH.MM, contoh 14.50. Insentif diberikan jika sesudah 16.45.</div>
+          <div class="field-error" id="jamError">Masukkan jam yang valid dalam format HH.MM (00.00–23.59).</div>
+        </div>
+        <hr class="divider">
+        <div class="preview-title">Perkiraan biaya</div>
+        <div class="preview-grid">
+          <div class="preview-item"><span>Insentif</span><strong id="prevInsentif">Rp 0</strong></div>
+          <div class="preview-item"><span>Uang makan</span><strong id="prevMakan">Rp 30.000</strong></div>
+          <div class="preview-item"><span>Uang BBM</span><strong id="prevBbm">Rp 0</strong></div>
+          <div class="preview-item"><span>Sewa kendaraan</span><strong id="prevSewa">Rp 0</strong></div>
+          <div class="preview-item total"><span>Total</span><strong id="prevTotal">Rp 30.000</strong></div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary" type="submit">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            ADD DATA
+          </button>
+          <button class="btn btn-quiet" id="resetBtn" type="button">Reset</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel list-panel">
+      <div class="main-panel-head">
+        <div>
+          <div class="panel-title-row">
+            <h2>Daftar perjalanan</h2>
+          </div>
+        </div>
+        <div class="toolbar">
+          <button class="btn btn-outline" id="adminLoginBtn" type="button">Admin</button>
+          <button class="btn btn-quiet" id="adminLogoutBtn" type="button" hidden>Keluar</button>
+          <button class="btn btn-icon admin-only" id="inputPanelToggle" type="button" aria-label="Sembunyikan panel input" aria-expanded="true" title="Sembunyikan panel input">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16m6-11-3 3 3 3"/></svg>
+          </button>
+          <button class="btn btn-icon admin-only" id="resetDataToggle" type="button" aria-label="Tampilkan tombol tindakan" aria-expanded="false" title="Tampilkan tombol tindakan">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg>
+          </button>
+          <button class="btn btn-icon admin-only" id="setupBtn" type="button" aria-label="Pengaturan Setup" title="Pengaturan Setup" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Z"/><path d="m19.4 15 .1.1a1.7 1.7 0 1 1-2.4 2.4l-.1-.1a1.7 1.7 0 0 0-2.9 1.2v.2a1.7 1.7 0 1 1-3.4 0v-.2a1.7 1.7 0 0 0-2.9-1.2l-.1.1a1.7 1.7 0 1 1-2.4-2.4l.1-.1a1.7 1.7 0 0 0-1.2-2.9H4a1.7 1.7 0 1 1 0-3.4h.2a1.7 1.7 0 0 0 1.2-2.9l-.1-.1a1.7 1.7 0 1 1 2.4-2.4l.1.1a1.7 1.7 0 0 0 2.9-1.2V2a1.7 1.7 0 1 1 3.4 0v.2a1.7 1.7 0 0 0 2.9 1.2l.1-.1a1.7 1.7 0 1 1 2.4 2.4l-.1.1a1.7 1.7 0 0 0 1.2 2.9h.2a1.7 1.7 0 1 1 0 3.4h-.2a1.7 1.7 0 0 0-1.2 2.9Z"/></svg></button>
+          <button class="btn btn-danger admin-only" id="resetDataBtn" type="button" hidden>Reset Data</button>
+          <button class="btn btn-outline admin-only" id="importBtn" type="button" hidden>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5M12 3v12"/></svg>
+            Import
+          </button>
+          <div class="export-action" id="exportAction">
+            <button class="btn btn-outline" id="exportBtn" type="button" aria-haspopup="menu" aria-controls="exportMenu" aria-expanded="false">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5M12 15V3"/></svg>
+              Ekspor
+            </button>
+            <div class="export-menu" id="exportMenu" role="menu" hidden>
+              <button class="export-choice" id="exportTripsBtn" type="button" role="menuitem">Ekspor Perjalanan</button>
+              <button class="export-choice" id="exportSummaryBtn" type="button" role="menuitem">Ekspor Ringkasan</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <input id="importFile" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden>
+      <div id="emptyState" class="empty">
+        <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg></div>
+        <strong>Belum ada data</strong>
+      </div>
+      <div class="table-wrap" id="tableWrap" hidden>
+        <table>
+          <thead>
+            <tr>
+              <th>Tanggal / Pegawai</th>
+              <th>Kantor</th>
+              <th>Kendaraan</th>
+              <th>Insentif</th>
+              <th>Makan</th>
+              <th>BBM</th>
+              <th>Sewa</th>
+              <th>Total</th>
+              <th class="delete-col"><button class="btn btn-icon admin-only" id="tripActionsToggle" type="button" aria-label="Tampilkan tindakan" title="Tampilkan tindakan" aria-expanded="false"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg></button></th>
+            </tr>
+          </thead>
+          <tbody id="tripRows"></tbody>
+        </table>
+      </div>
+      <div class="list-foot" id="listFoot" hidden><span id="footCount">0 perjalanan</span><span id="footSum">Total: Rp 0</span></div>
+    </section>
+  </main>
+  <footer>Yoel Busax</footer>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<dialog class="modal" id="adminLoginModal" aria-labelledby="adminLoginTitle">
+  <form id="adminLoginForm"><h2 id="adminLoginTitle">Masuk sebagai admin</h2><p class="panel-sub">Gunakan akun email admin yang sudah terdaftar di Firebase.</p><div class="editor-fields"><label class="editor-field">Email<input id="adminEmail" type="email" autocomplete="username" required></label><label class="editor-field">Kata sandi<input id="adminPassword" type="password" autocomplete="current-password" required></label></div><div class="modal-actions"><button class="btn btn-quiet" id="cancelAdminLogin" type="button">Batal</button><button class="btn btn-primary" type="submit">Masuk</button></div></form>
+</dialog>
+<dialog class="modal" id="resetDataModal" aria-labelledby="resetDataTitle" aria-describedby="resetDataMessage">
+  <h2 id="resetDataTitle">Hapus semua data?</h2>
+  <p id="resetDataMessage">Semua data perjalanan pada database online akan dihapus untuk semua pengguna dan tidak dapat dipulihkan.</p>
+  <div class="modal-actions">
+    <button class="btn btn-quiet" id="cancelResetData" type="button">Batal</button>
+    <button class="btn btn-danger" id="confirmResetData" type="button">Ya, hapus semua</button>
+  </div>
+</dialog>
+<dialog class="modal" id="duplicateTripModal" aria-labelledby="duplicateTripTitle" aria-describedby="duplicateTripMessage">
+  <h2 id="duplicateTripTitle">Duplikasi Data</h2>
+  <p id="duplicateTripMessage">Perjalanan untuk nama dan tanggal yang sama sudah pernah di input.</p>
+  <div class="modal-actions">
+    <button class="btn btn-primary" id="closeDuplicateTrip" type="button">OK</button>
+  </div>
+</dialog>
+<dialog class="modal setup-dialog" id="setupModal" aria-labelledby="setupTitle">
+  <div class="panel-title-row"><h2 id="setupTitle">Setup data master & biaya</h2><button class="btn btn-quiet" id="closeSetup" type="button">Tutup</button></div>
+  <p class="panel-sub">Perubahan master dan tarif berlaku untuk perjalanan baru. Atur biaya menjadi Rp 0 untuk menonaktifkannya.</p>
+  <div class="setup-grid">
+    <section class="setup-card">
+      <h3>Nama & Jabatan</h3>
+      <form class="setup-form" id="employeeAddForm">
+        <label>Nama<input name="name" required></label><label>Jabatan<input name="role" required></label>
+        <button class="btn btn-primary" type="submit">Tambah</button>
+      </form>
+      <div class="setup-table-wrap"><table class="setup-table"><thead><tr><th>Nama</th><th>Jabatan</th><th></th></tr></thead><tbody id="employeeSetupRows"></tbody></table></div>
+    </section>
+    <section class="setup-card">
+      <h3>Kantor Tujuan</h3>
+      <form class="setup-form" id="officeAddForm">
+        <label>Nama kantor<input name="name" required></label><label>Jarak (KM)<input name="distance" type="number" min="0" step="1" required></label>
+        <button class="btn btn-primary" type="submit">Tambah</button>
+      </form>
+      <div class="setup-table-wrap"><table class="setup-table"><thead><tr><th>Kantor</th><th>Jarak</th><th></th></tr></thead><tbody id="officeSetupRows"></tbody></table></div>
+    </section>
+    <section class="setup-card setup-card-wide">
+      <h3>Biaya perjalanan</h3>
+      <form id="costSetupForm">
+        <div class="setup-cost-layout">
+          <section class="setup-subcard">
+            <h4>Insentif per jabatan</h4>
+            <p>Nilai berlaku untuk semua pegawai dengan jabatan yang sama. Insentif sopir tetap mengikuti ketentuan jam pulang/bermalam.</p>
+            <div class="role-incentives" id="roleIncentiveFields"></div>
+          </section>
+          <section class="setup-subcard">
+            <h4>Biaya operasional</h4>
+            <p>Tarif perjalanan baru. Gunakan Rp 0 untuk menonaktifkan komponen.</p>
+            <div class="setup-costs">
+              <label>Uang Makan (Rp)<input name="meal" type="number" min="0" step="1000" required></label>
+              <label>BBM motor / KM (Rp)<input name="motorFuelRate" type="number" min="0" step="100" required></label>
+              <label>BBM mobil / KM (Rp)<input name="carFuelRate" type="number" min="0" step="100" required></label>
+              <label>Sewa motor (Rp)<input name="motorRental" type="number" min="0" step="1000" required></label>
+              <label>Sewa mobil (Rp)<input name="carRental" type="number" min="0" step="1000" required></label>
+            </div>
+          </section>
+        </div>
+        <div class="cost-save-row"><button class="btn btn-primary" type="submit">Simpan biaya</button></div>
+      </form>
+    </section>
+  </div>
+</dialog>
+<dialog class="modal" id="masterEditModal" aria-labelledby="masterEditTitle">
+  <form id="masterEditForm"><h2 id="masterEditTitle">Ubah data master</h2><div class="editor-fields" id="masterEditFields"></div><div class="modal-actions"><button class="btn btn-quiet" id="cancelMasterEdit" type="button">Batal</button><button class="btn btn-primary" type="submit">Simpan</button></div></form>
+</dialog>
+
+<script src="https://www.gstatic.com/firebasejs/12.18.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.18.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<script>
+let EMPLOYEES = [
+  { name: "Jemi Karlos, S.T.", role: "Head Department", incentive: 30000 },
+  { name: "Imanuel Natalis Laga Botan, A.Md.", role: "Head Division", incentive: 25000 },
+  { name: "Hendrikus Kilas, S.Kom.", role: "Head Division", incentive: 25000 },
+  { name: "Yoel Lausis Debby, S.Kom.", role: "Staff", incentive: 20000 },
+  { name: "Irenius Ardi Putra Utama, S.Kom.", role: "Staff", incentive: 20000 },
+  { name: "Lie Frans Febrianto", role: "Karyawan Kontrak", incentive: 0 },
+  { name: "Andreas Andi", role: "Petugas Sopir", incentive: 50000 },
+  { name: "Feredicus Erick Apriyandini", role: "Petugas Sopir", incentive: 50000 },
+  { name: "Agato", role: "Petugas Sopir", incentive: 50000 }
+];
+let OFFICES = [{"name":"Sosok","distance":0},{"name":"Ngabang","distance":40},{"name":"Kembayan","distance":45},{"name":"Bodok","distance":28},{"name":"Tayan","distance":50},{"name":"Sanggau","distance":50},{"name":"Semuntai","distance":69},{"name":"Sekadau","distance":100},{"name":"Engkolai","distance":85},{"name":"Entikong","distance":99},{"name":"Erna","distance":66},{"name":"Batang Tarang","distance":25},{"name":"Noyan","distance":112},{"name":"Balai Karangan","distance":80},{"name":"Nanga Biang","distance":88},{"name":"Toba","distance":85},{"name":"Salatiga","distance":113},{"name":"Meliau","distance":70},{"name":"Nanga Mahap","distance":152},{"name":"Senakin","distance":110},{"name":"Kubu Raya","distance":150},{"name":"Pintas Keladan","distance":154},{"name":"Terentang","distance":233},{"name":"Penyalimau","distance":67},{"name":"Jelimpo","distance":18},{"name":"Batu Layang","distance":150},{"name":"Kota Baru","distance":150},{"name":"Sanjan Emberas","distance":23},{"name":"Sekabuk","distance":184},{"name":"Sintang","distance":180},{"name":"Singkawang","distance":275},{"name":"Bengkayang","distance":150},{"name":"Balai Berkuak","distance":134},{"name":"Pahauman","distance":78},{"name":"Malenggang","distance":121},{"name":"Gunung Tamang","distance":125},{"name":"Inti Tiga","distance":30},{"name":"Trans I BHD","distance":86},{"name":"Beduai","distance":65},{"name":"Balai Sebut","distance":100},{"name":"Rawak","distance":120},{"name":"Berakak","distance":25},{"name":"Kuala Behe","distance":73},{"name":"Simpang Sp. V Jangkang","distance":120},{"name":"Terentang Darat","distance":65},{"name":"Karangan","distance":195},{"name":"Simpang Dua","distance":182},{"name":"Anik","distance":108},{"name":"Sanggau Ledo","distance":210},{"name":"Nahaya","distance":80},{"name":"Batu Buil","distance":277},{"name":"Nanga Tayap","distance":286},{"name":"Binua Sangku","distance":37},{"name":"Serimbu","distance":97},{"name":"Meranti","distance":138},{"name":"Anjongan","distance":153},{"name":"Monterado","distance":265},{"name":"Capkala","distance":238},{"name":"Binua Samih","distance":123},{"name":"Ledo","distance":193},{"name":"Jagoi Babang","distance":260},{"name":"Aruk","distance":320},{"name":"Simpang Tiga","distance":125},{"name":"Merimbang Jaya","distance":237},{"name":"Sandai","distance":246},{"name":"SP 1 landau Kodah","distance":123},{"name":"SP Empat Kayu Lapis","distance":116},{"name":"SP II Sungai Maboh","distance":158},{"name":"Nanga Taman","distance":138},{"name":"Manis Raya","distance":144}];
+const DEFAULT_COSTS = { meal:30000, motorFuelRate:1500, carFuelRate:3000, motorRental:35000, carRental:70000 };
+const DEFAULT_INCENTIVES_BY_ROLE = { "Head Department":30000, "Head Division":25000, "Staff":20000, "Karyawan Kontrak":0, "Petugas Sopir":50000 };
+let costsConfig = {...DEFAULT_COSTS, incentiveByRole:{...DEFAULT_INCENTIVES_BY_ROLE}};
+const rupiah = new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 });
+const $ = id => document.getElementById(id);
+let trips = [];
+let cloudDb = null;
+let cloudAuth = null;
+let cloudReady = false;
+let cloudSettingsLoaded = false;
+let cloudTripsLoaded = false;
+let isAdmin = false;
+let currentCloudUser = null;
+let persistedTripsById = new Map();
+let tripWriteQueue = Promise.resolve();
+let cloudSettingsUnsubscribe = null;
+let cloudTripsUnsubscribe = null;
+
+function applyCloudSettings(saved){
+  if(Array.isArray(saved.employees) && saved.employees.every(item=>item && item.name && item.role)) EMPLOYEES = saved.employees.map(({name,role})=>({name,role}));
+  if(Array.isArray(saved.offices) && saved.offices.every(item=>item && item.name && Number.isFinite(Number(item.distance)))) OFFICES = saved.offices;
+  if(saved.costs){
+    const baseCosts = {...DEFAULT_COSTS};
+    for(const key of Object.keys(DEFAULT_COSTS)) if(Number.isFinite(Number(saved.costs[key]))) baseCosts[key] = Number(saved.costs[key]);
+    const incentiveByRole = {...DEFAULT_INCENTIVES_BY_ROLE};
+    if(saved.costs.incentiveByRole && typeof saved.costs.incentiveByRole === "object"){
+      for(const [role,value] of Object.entries(saved.costs.incentiveByRole)) if(Number.isFinite(Number(value))) incentiveByRole[role] = Number(value);
+    }
+    costsConfig = {...baseCosts,incentiveByRole};
+  }
+  populateLists(); renderSetup(); updateName(); updateOffice(); calculatePreview(); renderTrips();
+}
+function saveMasterData(){
+  if(!isAdmin || !cloudDb || !cloudSettingsLoaded){ notify("Tunggu database selesai dimuat dan masuk sebagai admin."); return Promise.resolve(); }
+  const data = {employees:EMPLOYEES.map(({name,role})=>({name,role})),offices:OFFICES,costs:costsConfig};
+  return cloudDb.collection("app").doc("settings").set(data).catch(error=>{ notify("Setup gagal disimpan ke database."); console.error(error); });
+}
+function saveTrips(){
+  if(!isAdmin || !cloudDb || !cloudTripsLoaded){ notify("Tunggu database selesai dimuat dan masuk sebagai admin."); return Promise.resolve(); }
+  const nextTrips = trips.map(item=>({...item,id:String(item.id)}));
+  tripWriteQueue = tripWriteQueue.then(async()=>{
+    const nextById = new Map(nextTrips.map(item=>[item.id,item]));
+    const changes = [];
+    for(const id of persistedTripsById.keys()) if(!nextById.has(id)) changes.push({type:"delete",id});
+    for(const [id,item] of nextById){
+      const previous = persistedTripsById.get(id);
+      if(!previous || stableTripJSON(previous) !== stableTripJSON(item)) changes.push({type:"set",id,item});
+    }
+    for(let offset=0;offset<changes.length;offset+=450){
+      const batch = cloudDb.batch();
+      for(const change of changes.slice(offset,offset+450)){
+        const ref = cloudDb.collection("trips").doc(change.id);
+        if(change.type === "delete") batch.delete(ref); else batch.set(ref,change.item);
+      }
+      await batch.commit();
+    }
+    persistedTripsById = nextById;
+    return true;
+  }).catch(error=>{
+    notify("Data gagal disimpan ke database. Periksa koneksi atau akses admin.");
+    console.error(error);
+    trips = [...persistedTripsById.values()];
+    renderTrips();
+    return false;
+  });
+  return tripWriteQueue;
+}
+function stableTripJSON(item){ return JSON.stringify(Object.keys(item).sort().map(key=>[key,item[key]])); }
+function setCloudStatus(text){ if($("cloudStatus")) $("cloudStatus").textContent = text; }
+function applyAccess(){
+  document.body.classList.toggle("public-mode",!isAdmin);
+  document.body.classList.toggle("cloud-loading",!cloudReady || !cloudSettingsLoaded || !cloudTripsLoaded);
+  document.querySelectorAll(".admin-only").forEach(element=>element.hidden = !isAdmin);
+  $("adminLoginBtn").hidden = isAdmin;
+  $("adminLogoutBtn").hidden = !isAdmin;
+  if(isAdmin){
+    const actionsOpen = $("resetDataToggle").getAttribute("aria-expanded") === "true";
+    ["setupBtn","resetDataBtn","importBtn"].forEach(id=>$(id).hidden = !actionsOpen);
+    document.querySelectorAll(".row-actions").forEach(actions=>actions.hidden = $("tripActionsToggle").getAttribute("aria-expanded") !== "true");
+    setCloudStatus("Admin | database online");
+  }else{
+    document.querySelectorAll(".row-actions").forEach(actions=>actions.hidden = true);
+    setCloudStatus(cloudReady ? "Publik | hanya lihat & ekspor" : "Database belum terhubung");
+  }
+}
+function initCloud(){
+  isAdmin = false;
+  applyAccess();
+  const config = window.APP_FIREBASE_CONFIG || {};
+  const adminUid = String(window.APP_ADMIN_UID || "").trim();
+  if(!config.apiKey || !config.projectId || !config.appId || !adminUid || /ISI_|GANTI_/i.test(JSON.stringify(config)+adminUid)){
+    setCloudStatus("Firebase belum dikonfigurasi");
+    notify("Lengkapi konfigurasi Firebase dan UID admin pada firebase-config.js sebelum deploy.");
+    return;
+  }
+  try{
+    firebase.initializeApp(config);
+    cloudAuth = firebase.auth();
+    cloudDb = firebase.firestore();
+    cloudReady = true;
+    cloudSettingsUnsubscribe = cloudDb.collection("app").doc("settings").onSnapshot(snapshot=>{
+      cloudSettingsLoaded = true;
+      if(snapshot.exists) applyCloudSettings(snapshot.data());
+      else { populateLists(); renderSetup(); calculatePreview(); }
+      applyAccess();
+      setCloudStatus(isAdmin ? "Admin | database online" : "Publik | hanya lihat & ekspor");
+    },error=>{ setCloudStatus("Database tidak dapat dibaca"); notify("Tidak dapat membaca data setup dari Firebase."); console.error(error); });
+    cloudTripsUnsubscribe = cloudDb.collection("trips").onSnapshot(snapshot=>{
+      cloudTripsLoaded = true;
+      persistedTripsById = new Map(snapshot.docs.map(doc=>[doc.id,{...doc.data(),id:doc.id}]));
+      trips = [...persistedTripsById.values()];
+      renderTrips();
+      applyAccess();
+    },error=>{ setCloudStatus("Database tidak dapat dibaca"); notify("Tidak dapat membaca data perjalanan dari Firebase."); console.error(error); });
+    cloudAuth.onAuthStateChanged(user=>{
+      currentCloudUser = user;
+      isAdmin = Boolean(user && user.uid === adminUid);
+      if(user && !isAdmin){ cloudAuth.signOut(); notify("Akun ini tidak terdaftar sebagai admin aplikasi."); }
+      applyAccess();
+    });
+  }catch(error){ setCloudStatus("Gagal menghubungkan Firebase"); notify("Konfigurasi Firebase tidak valid."); console.error(error); }
+}
+function norm(value){
+  return String(value || "").toLocaleLowerCase("id-ID").replace(/[.,]/g,"").replace(/\s+/g," ").trim();
+}
+function findEmployee(value){ return EMPLOYEES.find(x => norm(x.name) === norm(value)); }
+function findOffice(value){ return OFFICES.find(x => norm(x.name) === norm(value)); }
+function money(value){ return rupiah.format(Number(value || 0)).replace(/\u00a0/g," "); }
+function escapeHtml(value){
+  return String(value ?? "").replace(/[&<>"']/g, ch => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[ch]));
+}
+function localISODate(date = new Date()){
+  const local = new Date(date.getTime() - date.getTimezoneOffset()*60000);
+  return local.toISOString().slice(0,10);
+}
+function dateInputToISO(value){
+  const match = String(value || "").trim().match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  if(!match) return "";
+  const [,day,month,year] = match;
+  const date = new Date(Number(year),Number(month)-1,Number(day),12);
+  if(date.getFullYear() !== Number(year) || date.getMonth() !== Number(month)-1 || date.getDate() !== Number(day)) return "";
+  return `${year}-${month}-${day}`;
+}
+function isoToDateInput(iso){
+  const match = String(iso || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  return match ? `${match[3]}/${match[2]}/${match[1]}` : "";
+}
+function formatDate(iso){
+  if(!iso) return "—";
+  const parts = iso.split("-").map(Number);
+  if(parts.length !== 3 || parts.some(n => !n)) return iso;
+  const date = new Date(parts[0],parts[1]-1,parts[2],12);
+  const dayName = new Intl.DateTimeFormat("id-ID",{weekday:"long"}).format(date);
+  return `${dayName[0].toLocaleUpperCase("id-ID")}${dayName.slice(1)}, ${String(parts[2]).padStart(2,"0")}/${String(parts[1]).padStart(2,"0")}/${String(parts[0]).padStart(4,"0")}`;
+}
+function minutesFromTime(value){
+  const match = String(value || "").trim().match(/^([01]\d|2[0-3])\.([0-5]\d)$/);
+  if(!match) return null;
+  return Number(match[1])*60 + Number(match[2]);
+}
+function currentRole(){
+  const employee = findEmployee($("nama").value);
+  return employee ? employee.role : "";
+}
+function isDriver(){ return currentRole() === "Petugas Sopir"; }
+function currentOffice(){ return findOffice($("kantor").value); }
+function selectedVehicle(){ return $("kendaraan").value; }
+
+function updateName(){
+  const employee = findEmployee($("nama").value);
+  $("jabatanPreview").textContent = employee ? employee.role : "Jabatan otomatis";
+  $("namaError").classList.remove("show");
+  updateVehicleOptions();
+  calculatePreview();
+}
+function updateVehicleOptions(){
+  const select = $("kendaraan");
+  const previous = select.value;
+  const driver = isDriver();
+  const mode = driver ? "driver" : "vehicle";
+  if(select.dataset.mode !== mode){
+    select.innerHTML = driver
+      ? '<option value="">Pilih status sopir...</option><option value="Bermalam">Bermalam</option><option value="Jam Pulang">Jam Pulang</option>'
+      : '<option value="">Pilih kendaraan...</option><option value="Kantor">Kantor</option><option value="Motor Pribadi">Motor Pribadi</option><option value="Mobil Pribadi">Mobil Pribadi</option>';
+    select.dataset.mode = mode;
+  }
+  if([...select.options].some(option => option.value === previous)) select.value = previous;
+  $("jamWrap").classList.toggle("show", driver && select.value === "Jam Pulang");
+  if(!(driver && select.value === "Jam Pulang")) $("jamPulang").value = "";
+  $("jamError").classList.remove("show");
+  calculatePreview();
+}
+function updateOffice(){
+  const office = currentOffice();
+  $("jarakLabel").textContent = office ? `${office.distance} km` : "Jarak kantor otomatis";
+  $("kantorError").classList.remove("show");
+  calculatePreview();
+}
+function updateDatePreview(){
+  const isoDate = dateInputToISO($("tanggal").value);
+  $("tanggalPreview").textContent = isoDate ? formatDate(isoDate) : "Format: Hari, DD/MM/YYYY";
+}
+function computeCosts(){
+  const employee = findEmployee($("nama").value);
+  const office = currentOffice();
+  const role = employee ? employee.role : "";
+  const vehicle = selectedVehicle();
+  const driver = role === "Petugas Sopir";
+  const distance = office ? Number(office.distance) : 0;
+  let incentive = Number(costsConfig.incentiveByRole[role] ?? 0);
+  let fuel = 0;
+  let rental = 0;
+  if(driver){
+    const time = minutesFromTime($("jamPulang").value);
+    incentive = vehicle === "Bermalam" ? Number(costsConfig.incentiveByRole[role] ?? 0) : vehicle === "Jam Pulang" && time !== null && time > (16*60+45) ? Number(costsConfig.incentiveByRole[role] ?? 0) : 0;
+    fuel = 0; rental = 0;
+  }
+  if(!driver){
+    if(vehicle === "Motor Pribadi"){ fuel = costsConfig.motorFuelRate * distance; rental = costsConfig.motorRental; }
+    if(vehicle === "Mobil Pribadi"){ fuel = costsConfig.carFuelRate * distance; rental = costsConfig.carRental; }
+  }
+  const total = incentive + costsConfig.meal + fuel + rental;
+  return { incentive, meal: costsConfig.meal, fuel, rental, total, distance, driver, employee, office, vehicle };
+}
+function calculatePreview(){
+  const costs = computeCosts();
+  $("prevInsentif").textContent = money(costs.incentive);
+  $("prevMakan").textContent = money(costs.meal);
+  $("prevBbm").textContent = money(costs.fuel);
+  $("prevSewa").textContent = money(costs.rental);
+  $("prevTotal").textContent = money(costs.total);
+}
+function populateLists(){
+  $("namaList").innerHTML = EMPLOYEES.map(person => `<option value="${escapeHtml(person.name)}"></option>`).join("");
+  $("kantorList").innerHTML = OFFICES.map(office => `<option value="${escapeHtml(office.name)}"></option>`).join("");
+}
+function renderSetup(){
+  $("employeeSetupRows").innerHTML = EMPLOYEES.map((person,index)=>`<tr><td>${escapeHtml(person.name)}</td><td>${escapeHtml(person.role)}</td><td><div class="setup-actions"><button class="btn btn-quiet" data-master-edit="employee" data-index="${index}" type="button">Edit</button><button class="btn btn-quiet" data-master-delete="employee" data-index="${index}" type="button">Hapus</button></div></td></tr>`).join("");
+  $("officeSetupRows").innerHTML = OFFICES.map((office,index)=>`<tr><td>${escapeHtml(office.name)}</td><td>${Number(office.distance)} km</td><td><div class="setup-actions"><button class="btn btn-quiet" data-master-edit="office" data-index="${index}" type="button">Edit</button><button class="btn btn-quiet" data-master-delete="office" data-index="${index}" type="button">Hapus</button></div></td></tr>`).join("");
+  for(const [key,value] of Object.entries(DEFAULT_COSTS)) $("costSetupForm").elements.namedItem(key).value = value;
+  const roles = [...new Set([...EMPLOYEES.map(person=>person.role),...Object.keys(costsConfig.incentiveByRole)])].sort((a,b)=>a.localeCompare(b,"id"));
+  $("roleIncentiveFields").innerHTML = roles.map(role=>`<label class="role-incentive-row"><span>${escapeHtml(role)}</span><input type="number" min="0" step="1000" required aria-label="Insentif jabatan ${escapeHtml(role)}" data-role-incentive="${escapeHtml(role)}" value="${Number(costsConfig.incentiveByRole[role] ?? 0)}"></label>`).join("");
+}
+let masterEditState = null;
+function openMasterEditor(type,index){
+  const isEmployee = type === "employee";
+  const record = (isEmployee ? EMPLOYEES : OFFICES)[index];
+  if(!record) return;
+  masterEditState = {type,index};
+  const fields = isEmployee
+    ? [{key:"name",label:"Nama",type:"text"},{key:"role",label:"Jabatan",type:"text"}]
+    : [{key:"name",label:"Nama kantor",type:"text"},{key:"distance",label:"Jarak (KM)",type:"number"}];
+  $("masterEditTitle").textContent = isEmployee ? "Ubah nama pegawai" : "Ubah kantor tujuan";
+  $("masterEditFields").innerHTML = fields.map(field=>`<label class="editor-field">${field.label}<input name="${field.key}" type="${field.type}" ${field.type === "number" ? 'min="0" step="1"' : ""} required value="${escapeHtml(record[field.key])}"></label>`).join("");
+  $("masterEditModal").showModal();
+}
+function refreshMasterData(){
+  saveMasterData(); populateLists(); renderSetup(); updateName(); updateOffice();
+}
+function addMasterRecord(type,form){
+  const values = Object.fromEntries(new FormData(form).entries());
+  const target = type === "employee" ? EMPLOYEES : OFFICES;
+  if(target.some(item=>norm(item.name) === norm(values.name))){ notify("Nama tersebut sudah terdaftar."); return; }
+  target.push(type === "employee"
+    ? {name:values.name.trim(),role:values.role.trim()}
+    : {name:values.name.trim(),distance:Number(values.distance)});
+  form.reset(); refreshMasterData(); notify("Data Setup ditambahkan.");
+}
+function submitMasterEdit(event){
+  event.preventDefault();
+  if(!masterEditState) return;
+  const {type,index} = masterEditState;
+  const values = Object.fromEntries(new FormData(event.currentTarget).entries());
+  const target = type === "employee" ? EMPLOYEES : OFFICES;
+  if(target.some((item,i)=>i !== index && norm(item.name) === norm(values.name))){ notify("Nama tersebut sudah terdaftar."); return; }
+  target[index] = type === "employee"
+    ? {name:values.name.trim(),role:values.role.trim()}
+    : {name:values.name.trim(),distance:Number(values.distance)};
+  $("masterEditModal").close(); masterEditState = null; refreshMasterData(); notify("Data Setup diperbarui.");
+}
+function deleteMasterRecord(type,index){
+  const target = type === "employee" ? EMPLOYEES : OFFICES;
+  const record = target[index];
+  if(!record || !window.confirm(`Hapus ${record.name} dari data Setup?`)) return;
+  target.splice(index,1); refreshMasterData(); notify("Data Setup dihapus.");
+}
+function validateForm(){
+  let valid = true;
+  const employee = findEmployee($("nama").value);
+  const office = currentOffice();
+  if(!employee){
+    $("namaError").classList.add("show"); valid = false;
+  }
+  if(!office){
+    $("kantorError").classList.add("show"); valid = false;
+  }
+  const tripDate = dateInputToISO($("tanggal").value);
+  if(employee && tripDate && trips.some(item=>item.date === tripDate && norm(item.name) === norm(employee.name))){
+    $("duplicateTripModal").showModal();
+    return false;
+  }
+  if(!tripDate){ $("tanggal").setCustomValidity("Masukkan tanggal yang valid dengan format DD/MM/YYYY."); $("tanggal").reportValidity(); valid = false; }
+  if(!selectedVehicle()){ $("kendaraan").reportValidity(); valid = false; }
+  if(isDriver() && selectedVehicle() === "Jam Pulang" && minutesFromTime($("jamPulang").value) === null){
+    $("jamError").classList.add("show"); $("jamPulang").focus(); valid = false;
+  }
+  return valid;
+}
+function addTrip(event){
+  event.preventDefault();
+  if(!isAdmin){ notify("Masuk sebagai admin untuk menambah data."); return; }
+  if(!validateForm()) return;
+  const costs = computeCosts();
+  const time = costs.driver && costs.vehicle === "Jam Pulang" ? $("jamPulang").value.trim() : "";
+  const row = {
+    id: `${Date.now()}-${Math.random().toString(36).slice(2,8)}`,
+    date: dateInputToISO($("tanggal").value), name: costs.employee.name, role: costs.employee.role,
+    office: costs.office.name, distance: costs.distance,
+    vehicle: costs.driver ? (costs.vehicle === "Jam Pulang" ? `Jam Pulang · ${time}` : "Bermalam") : costs.vehicle,
+    incentive: costs.incentive, incentiveDisplay: money(costs.incentive),
+    meal: costs.meal, fuel: costs.fuel, rental: costs.rental, total: costs.total
+  };
+  trips.unshift(row);
+  void saveTrips();
+  renderTrips();
+  $("tripForm").reset();
+  $("tanggal").value = isoToDateInput(localISODate());
+  $("jabatanPreview").textContent = "Jabatan otomatis";
+  $("jamWrap").classList.remove("show");
+  $("jarakLabel").textContent = "Jarak kantor otomatis";
+  updateDatePreview();
+  updateVehicleOptions();
+  calculatePreview();
+  $("tanggal").focus();
+  notify("Done");
+}
+function summarizeTrips(){
+  const byName = new Map();
+  trips.forEach(item=>{
+    const key = norm(item.name);
+    const summary = byName.get(key) || { name:item.name, count:0, incentive:0, meal:0, fuel:0, rental:0, total:0 };
+    summary.count++;
+    summary.incentive += Number(item.incentive || 0);
+    summary.meal += Number(item.meal || 0);
+    summary.fuel += Number(item.fuel || 0);
+    summary.rental += Number(item.rental || 0);
+    summary.total += Number(item.total || 0);
+    byName.set(key,summary);
+  });
+  return [...byName.values()].sort((a,b)=>b.total-a.total || a.name.localeCompare(b.name,"id"));
+}
+function renderTrips(){
+  const body = $("tripRows");
+  const summaryBody = $("summaryRows");
+  const empty = trips.length === 0;
+  $("emptyState").hidden = !empty;
+  $("tableWrap").hidden = empty;
+  $("listFoot").hidden = empty;
+  const total = trips.reduce((sum,item)=>sum + Number(item.total || 0),0);
+  const summaries = summarizeTrips();
+  $("summaryEmpty").hidden = summaries.length > 0;
+  summaryBody.innerHTML = summaries.map(item=>`
+    <tr>
+      <td><div class="person-cell" title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</div></td>
+      <td>${item.count.toLocaleString("id-ID")}</td>
+      <td class="money">${money(item.incentive)}</td>
+      <td class="money">${money(item.meal)}</td>
+      <td class="money">${money(item.fuel)}</td>
+      <td class="money">${money(item.rental)}</td>
+      <td class="money money-total">${money(item.total)}</td>
+    </tr>`).join("");
+  $("footCount").textContent = `${trips.length} perjalanan tercatat`;
+  $("footSum").textContent = `Total: ${money(total)}`;
+  const tripsByDate = [...trips].sort((a,b)=>String(b.date || "").localeCompare(String(a.date || "")));
+  const actionsExpanded = $("tripActionsToggle").getAttribute("aria-expanded") === "true";
+  body.innerHTML = tripsByDate.map(item => `
+    <tr>
+      <td><div class="person-cell" title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</div><div class="mini-muted">${escapeHtml(item.role)}</div><div class="mini-muted">${escapeHtml(formatDate(item.date))}</div></td>
+      <td><div style="font-weight:700;color:#31495e">${escapeHtml(item.office)}</div><div class="mini-muted">${Number(item.distance || 0)} km</div></td>
+      <td><span class="pill">${escapeHtml(item.vehicle)}</span></td>
+      <td class="money">${escapeHtml(item.incentiveDisplay ?? money(item.incentive))}</td>
+      <td class="money">${money(item.meal)}</td>
+      <td class="money">${money(item.fuel)}</td>
+      <td class="money">${money(item.rental)}</td>
+      <td class="money money-total">${money(item.total)}</td>
+      <td class="delete-col"><div class="row-actions" ${actionsExpanded ? "" : "hidden"}>
+        <button type="button" class="delete-btn receipt-btn" data-meal-receipt="${escapeHtml(item.id)}" aria-label="Makan dengan nota untuk ${escapeHtml(item.name)}" title="Makan dengan nota"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6m-6 4h6m-6 4h3"/></svg></button>
+        <button type="button" class="delete-btn" data-delete="${escapeHtml(item.id)}" aria-label="Hapus perjalanan ${escapeHtml(item.name)}" title="Hapus data"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2m3 0-1 14H6L5 6m4 4v6m6-6v6"/></svg></button>
+      </div></td>
+    </tr>`).join("");
+}
+function deleteTrip(id){
+  if(!isAdmin) return;
+  const entry = trips.find(item => item.id === id);
+  if(!entry) return;
+  if(!window.confirm(`Hapus rekap perjalanan ${entry.name} ke ${entry.office}?`)) return;
+  trips = trips.filter(item => item.id !== id);
+  void saveTrips(); renderTrips(); notify("Data perjalanan dihapus.");
+}
+function markMealWithReceipt(id){
+  if(!isAdmin) return;
+  const trip = trips.find(item=>item.id === id);
+  if(!trip) return;
+  if(Number(trip.meal || 0) === 0){ notify("Uang Makan perjalanan ini sudah Rp 0."); return; }
+  trip.total = Number(trip.total || 0) - Number(trip.meal || 0);
+  trip.meal = 0;
+  void saveTrips(); renderTrips(); notify(`Uang Makan ${trip.name} menjadi Rp 0 (Makan dengan nota).`);
+}
+const XLSX_HEADERS = ["Tanggal","Nama","Jabatan","Kantor","Jarak (KM)","Kendaraan / Status","Insentif","Uang Makan","Uang BBM","Sewa Kendaraan","Total"];
+function formatXLSXDate(iso){
+  const [year,month,day] = String(iso || "").split("-");
+  return year && month && day ? `${day}-${month}-${year}` : String(iso || "");
+}
+function exportTripsXLSX(){
+  if(!trips.length){ notify("Belum ada data untuk diekspor."); return; }
+  if(!window.XLSX){ notify("Fitur XLSX tidak tersedia. Periksa koneksi internet lalu muat ulang halaman."); return; }
+  const tripsByDate = [...trips].sort((a,b)=>String(b.date || "").localeCompare(String(a.date || "")));
+  const rows = [XLSX_HEADERS, ...tripsByDate.map(item => [
+    formatXLSXDate(item.date),item.name,item.role,item.office,Number(item.distance || 0),item.vehicle,
+    Number(item.incentive || 0),item.meal,item.fuel,item.rental,item.total
+  ])];
+  const workbook = XLSX.utils.book_new();
+  const worksheet = XLSX.utils.aoa_to_sheet(rows);
+  XLSX.utils.book_append_sheet(workbook,worksheet,"Perjalanan");
+  XLSX.writeFile(workbook,`rekap-perjalanan-dinas-${localISODate()}.xlsx`);
+  notify("File perjalanan XLSX berhasil disiapkan.");
+}
+function exportSummaryXLSX(){
+  if(!trips.length){ notify("Belum ada ringkasan untuk diekspor."); return; }
+  if(!window.XLSX){ notify("Fitur XLSX tidak tersedia. Periksa koneksi internet lalu muat ulang halaman."); return; }
+  const headers = ["Nama","Jumlah Perjalanan","Insentif","Uang Makan","Uang BBM","Sewa Kendaraan","Total"];
+  const summaries = summarizeTrips();
+  const rows = [headers,...summaries.map(item=>[item.name,item.count,item.incentive,item.meal,item.fuel,item.rental,item.total])];
+  const worksheet = XLSX.utils.aoa_to_sheet(rows);
+  worksheet["!cols"] = [{wch:34},{wch:20},{wch:16},{wch:16},{wch:16},{wch:20},{wch:18}];
+  for(let row=1;row<rows.length;row++){
+    for(let column=2;column<headers.length;column++){
+      const cell = worksheet[XLSX.utils.encode_cell({r:row,c:column})];
+      if(cell) cell.z = "#,##0";
+    }
+  }
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook,worksheet,"Ringkasan");
+  XLSX.writeFile(workbook,`ringkasan-perjalanan-dinas-${localISODate()}.xlsx`);
+  notify("File XLSX Ringkasan berhasil disiapkan untuk laporan.");
+}
+function xlsxDateToISO(value){
+  if(value instanceof Date && !Number.isNaN(value.getTime())){
+    return `${value.getFullYear()}-${String(value.getMonth()+1).padStart(2,"0")}-${String(value.getDate()).padStart(2,"0")}`;
+  }
+  if(typeof value === "number" && window.XLSX){
+    const parts = XLSX.SSF.parse_date_code(value);
+    if(parts) return `${parts.y}-${String(parts.m).padStart(2,"0")}-${String(parts.d).padStart(2,"0")}`;
+  }
+  const date = String(value ?? "").trim();
+  const indonesiaDate = date.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+  const isoDate = date.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  const iso = indonesiaDate ? `${indonesiaDate[3]}-${indonesiaDate[2]}-${indonesiaDate[1]}` : isoDate ? date : "";
+  if(!iso) return "";
+  const parsed = new Date(`${iso}T12:00:00`);
+  return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0,10) === iso ? iso : "";
+}
+async function importXLSX(file){
+  if(!file) return;
+  if(!isAdmin){ notify("Masuk sebagai admin untuk mengimpor data."); return; }
+  if(!/\.xlsx$/i.test(file.name)){ notify("Pilih file berformat .xlsx."); return; }
+  if(!window.XLSX){ notify("Fitur XLSX tidak tersedia. Periksa koneksi internet lalu muat ulang halaman."); return; }
+  try{
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    if(bytes.byteLength < 4 || bytes[0] !== 0x50 || bytes[1] !== 0x4b){
+      notify("File tidak dikenali sebagai workbook XLSX."); return;
+    }
+    const workbook = XLSX.read(bytes,{type:"array",cellDates:true});
+    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+    if(!worksheet) throw new Error("Workbook tidak memiliki lembar kerja.");
+    const matrix = XLSX.utils.sheet_to_json(worksheet,{header:1,defval:"",raw:true});
+    const headers = (matrix.shift() || []).map(value=>String(value).trim());
+    const indexes = Object.fromEntries(XLSX_HEADERS.map(header=>[header,headers.indexOf(header)]));
+    if(XLSX_HEADERS.some(header=>indexes[header] < 0)){
+      notify("Kolom file tidak sesuai. Gunakan file XLSX hasil ekspor aplikasi."); return;
+    }
+    const imported = [];
+    for(const values of matrix){
+      if(!values.some(value=>String(value ?? "").trim())) continue;
+      const get = header=>values[indexes[header]] ?? "";
+      const date = xlsxDateToISO(get("Tanggal"));
+      const name = String(get("Nama")).trim();
+      const role = String(get("Jabatan")).trim();
+      const office = String(get("Kantor")).trim();
+      const vehicle = String(get("Kendaraan / Status")).trim();
+      const distance = Number(get("Jarak (KM)"));
+      const incentiveRaw = get("Insentif");
+      const incentive = incentiveRaw === "-" ? 0 : Number(incentiveRaw);
+      const meal = Number(get("Uang Makan"));
+      const fuel = Number(get("Uang BBM"));
+      const rental = Number(get("Sewa Kendaraan"));
+      const total = Number(get("Total"));
+      const numericCells = [get("Jarak (KM)"),incentiveRaw === "-" ? 0 : incentiveRaw,get("Uang Makan"),get("Uang BBM"),get("Sewa Kendaraan"),get("Total")];
+      if(!date || !name || !role || !office || !vehicle ||
+         numericCells.some(value=>String(value).trim() === "") ||
+         ![distance,incentive,meal,fuel,rental,total].every(Number.isFinite)){
+        throw new Error("Ada baris dengan tanggal, identitas, atau nilai biaya yang tidak valid.");
+      }
+      imported.push({
+        id:`${Date.now()}-${Math.random().toString(36).slice(2,8)}`,
+        date,name,role,office,distance,vehicle,incentive,
+        incentiveDisplay:money(incentive),meal,fuel,rental,total
+      });
+    }
+    if(!imported.length){ notify("Tidak ada data perjalanan pada file tersebut."); return; }
+    trips = [...trips,...imported];
+    await saveTrips(); renderTrips();
+    notify(`${imported.length} perjalanan berhasil diimpor.`);
+  }catch(error){
+    notify(error.message || "File XLSX tidak dapat dibaca.");
+  }
+}
+let toastTimer;
+function notify(message){
+  const toast = $("toast"); toast.textContent = message; toast.classList.add("show");
+  clearTimeout(toastTimer); toastTimer = setTimeout(()=>toast.classList.remove("show"),3200);
+}
+function resetForm(){
+  $("tripForm").reset();
+  $("tanggal").value = isoToDateInput(localISODate());
+  $("jabatanPreview").textContent = "Jabatan otomatis";
+  $("jamWrap").classList.remove("show");
+  $("namaError").classList.remove("show");
+  $("kantorError").classList.remove("show");
+  $("jamError").classList.remove("show");
+  $("jarakLabel").textContent = "Jarak kantor otomatis";
+  updateDatePreview(); updateVehicleOptions(); calculatePreview();
+  $("tanggal").focus();
+}
+function resetAllTrips(){
+  if(!isAdmin) return;
+  trips = [];
+  saveTrips().then(saved=>{
+    if(!saved) return;
+    renderTrips();
+    $("resetDataModal").close();
+    $("tanggal").focus();
+    notify("Semua data perjalanan telah dihapus dari database.");
+  });
+}
+
+$("adminLoginBtn").addEventListener("click",()=>{
+  if(!cloudReady){ notify("Firebase belum dikonfigurasi."); return; }
+  $("adminLoginModal").showModal(); $("adminEmail").focus();
+});
+$("cancelAdminLogin").addEventListener("click",()=>$("adminLoginModal").close());
+$("adminLoginForm").addEventListener("submit",async event=>{
+  event.preventDefault();
+  if(!cloudReady || !cloudAuth){ notify("Firebase belum terhubung."); return; }
+  const submitButton=event.currentTarget.querySelector('[type="submit"]');
+  submitButton.disabled=true;
+  try{
+    await cloudAuth.signInWithEmailAndPassword($("adminEmail").value.trim(),$("adminPassword").value);
+    $("adminLoginModal").close(); $("adminPassword").value="";
+  }catch(error){
+    notify(error.code === "auth/invalid-credential" || error.code === "auth/wrong-password" ? "Email atau kata sandi tidak sesuai." : "Login admin gagal. Periksa email, kata sandi, dan konfigurasi Firebase.");
+    console.error(error);
+  }finally{ submitButton.disabled=false; }
+});
+$("adminLogoutBtn").addEventListener("click",async()=>{ if(cloudAuth) await cloudAuth.signOut(); });
+$("nama").addEventListener("input",updateName);
+$("nama").addEventListener("change",()=>{
+  const emp=findEmployee($("nama").value);
+  if(emp) $("nama").value=emp.name;
+  updateName();
+});
+$("kantor").addEventListener("input",updateOffice);
+$("kantor").addEventListener("change",()=>{
+  const office=findOffice($("kantor").value);
+  if(office) $("kantor").value=office.name;
+  updateOffice();
+});
+$("tanggal").addEventListener("change",updateDatePreview);
+$("tanggal").addEventListener("input",()=>{
+  $("tanggal").setCustomValidity("");
+  updateDatePreview();
+});
+$("kendaraan").addEventListener("change",()=>{
+  $("jamWrap").classList.toggle("show",isDriver() && selectedVehicle()==="Jam Pulang");
+  if(!(isDriver() && selectedVehicle()==="Jam Pulang")) $("jamPulang").value="";
+  calculatePreview();
+});
+$("jamPulang").addEventListener("input",()=>{
+  $("jamError").classList.remove("show");
+  // If users type 14:50, standardize to the requested 14.50 format.
+  const value=$("jamPulang").value;
+  if(/^\d{2}:\d{2}$/.test(value)) $("jamPulang").value=value.replace(":",".");
+  calculatePreview();
+});
+$("tripForm").addEventListener("submit",addTrip);
+$("resetBtn").addEventListener("click",resetForm);
+$("tripRows").addEventListener("click",event=>{
+  const receipt=event.target.closest("[data-meal-receipt]");
+  const remove=event.target.closest("[data-delete]");
+  if(receipt) markMealWithReceipt(receipt.dataset.mealReceipt);
+  else if(remove) deleteTrip(remove.dataset.delete);
+});
+$("tripActionsToggle").addEventListener("click",()=>{
+  const reveal = $("tripActionsToggle").getAttribute("aria-expanded") !== "true";
+  document.querySelectorAll(".row-actions").forEach(actions=>actions.hidden = !reveal);
+  $("tripActionsToggle").setAttribute("aria-expanded",String(reveal));
+  $("tripActionsToggle").setAttribute("aria-label",reveal ? "Sembunyikan tindakan" : "Tampilkan tindakan");
+  $("tripActionsToggle").title = reveal ? "Sembunyikan tindakan" : "Tampilkan tindakan";
+});
+$("setupBtn").addEventListener("click",()=>{ renderSetup(); $("setupModal").showModal(); });
+$("closeSetup").addEventListener("click",()=>$("setupModal").close());
+$("employeeAddForm").addEventListener("submit",event=>{ event.preventDefault(); addMasterRecord("employee",event.currentTarget); });
+$("officeAddForm").addEventListener("submit",event=>{ event.preventDefault(); addMasterRecord("office",event.currentTarget); });
+document.querySelector(".setup-grid").addEventListener("click",event=>{
+  const edit=event.target.closest("[data-master-edit]");
+  const remove=event.target.closest("[data-master-delete]");
+  if(edit) openMasterEditor(edit.dataset.masterEdit,Number(edit.dataset.index));
+  else if(remove) deleteMasterRecord(remove.dataset.masterDelete,Number(remove.dataset.index));
+});
+$("masterEditForm").addEventListener("submit",submitMasterEdit);
+$("cancelMasterEdit").addEventListener("click",()=>$("masterEditModal").close());
+$("costSetupForm").addEventListener("submit",event=>{
+  event.preventDefault();
+  const nextCosts = Object.fromEntries(Object.keys(DEFAULT_COSTS).map(key=>[key,Number(event.currentTarget.elements.namedItem(key).value)]));
+  const incentiveByRole = {...costsConfig.incentiveByRole};
+  document.querySelectorAll("[data-role-incentive]").forEach(input=>incentiveByRole[input.dataset.roleIncentive] = Number(input.value));
+  costsConfig = {...nextCosts,incentiveByRole};
+  saveMasterData(); calculatePreview(); renderTrips(); notify("Pengaturan biaya disimpan.");
+});
+function closeExportMenu(){
+  $("exportMenu").hidden = true;
+  $("exportBtn").setAttribute("aria-expanded","false");
+}
+$("exportBtn").addEventListener("click",()=>{
+  const opening = $("exportMenu").hidden;
+  $("exportMenu").hidden = !opening;
+  $("exportBtn").setAttribute("aria-expanded",String(opening));
+  if(opening) $("exportTripsBtn").focus();
+});
+$("exportTripsBtn").addEventListener("click",()=>{ closeExportMenu(); exportTripsXLSX(); });
+$("exportSummaryBtn").addEventListener("click",()=>{ closeExportMenu(); exportSummaryXLSX(); });
+document.addEventListener("pointerdown",event=>{ if(!event.target.closest("#exportAction")) closeExportMenu(); });
+document.addEventListener("keydown",event=>{
+  if(event.key === "Escape" && !$("exportMenu").hidden){ closeExportMenu(); $("exportBtn").focus(); }
+});
+$("importBtn").addEventListener("click",()=>$("importFile").click());
+$("importFile").addEventListener("change",async event=>{
+  await importXLSX(event.target.files[0]);
+  event.target.value = "";
+});
+$("resetDataBtn").addEventListener("click",()=>$("resetDataModal").showModal());
+$("cancelResetData").addEventListener("click",()=>$("resetDataModal").close());
+$("closeDuplicateTrip").addEventListener("click",()=>{
+  $("duplicateTripModal").close();
+  $("nama").focus();
+});
+$("resetDataToggle").addEventListener("click",()=>{
+  closeExportMenu();
+  const reveal = $("setupBtn").hidden;
+  ["setupBtn","resetDataBtn","importBtn","exportAction"].forEach(id=>$(id).hidden = !reveal);
+  $("resetDataToggle").setAttribute("aria-expanded",String(reveal));
+  $("resetDataToggle").setAttribute("aria-label",reveal ? "Sembunyikan tombol tindakan" : "Tampilkan tombol tindakan");
+  $("resetDataToggle").title = reveal ? "Sembunyikan tombol tindakan" : "Tampilkan tombol tindakan";
+  $("resetDataToggle").querySelector("svg path").setAttribute("d",reveal ? "m9 6 6 6-6 6" : "m15 6-6 6 6 6");
+});
+$("summaryToggle").addEventListener("click",()=>{
+  const panel = document.querySelector(".summary-panel");
+  const expanded = !panel.classList.contains("collapsed");
+  panel.classList.toggle("collapsed",expanded);
+  $("summaryToggle").setAttribute("aria-expanded",String(!expanded));
+  $("summaryToggle").setAttribute("aria-label",expanded ? "Tampilkan ringkasan" : "Sembunyikan ringkasan");
+  $("summaryToggle").title = expanded ? "Tampilkan ringkasan" : "Sembunyikan ringkasan";
+  $("summaryToggle").querySelector("svg path").setAttribute("d",expanded ? "m6 9 6 6 6-6" : "m6 15 6-6 6 6");
+});
+$("inputPanelToggle").addEventListener("click",()=>{
+  const expanded = !$("layout").classList.contains("input-collapsed");
+  $("layout").classList.toggle("input-collapsed",expanded);
+  $("inputPanelToggle").setAttribute("aria-expanded",String(!expanded));
+  $("inputPanelToggle").setAttribute("aria-label",expanded ? "Tampilkan panel input" : "Sembunyikan panel input");
+  $("inputPanelToggle").title = expanded ? "Tampilkan panel input" : "Sembunyikan panel input";
+  $("inputPanelToggle").querySelector("svg path").setAttribute("d",expanded ? "M9 4v16m6-11 3 3-3 3" : "M9 4v16m6-11-3 3 3 3");
+  syncListPanelHeight();
+});
+$("confirmResetData").addEventListener("click",resetAllTrips);
+
+populateLists();
+renderSetup();
+$("tanggal").value=isoToDateInput(localISODate());
+updateDatePreview();
+renderTrips();
+updateVehicleOptions();
+const formPanelElement = document.querySelector(".form-panel");
+const layoutElement = document.querySelector(".layout");
+function syncListPanelHeight(){
+  if(layoutElement.classList.contains("input-collapsed")) return;
+  layoutElement.style.setProperty("--form-panel-height",`${Math.ceil(formPanelElement.getBoundingClientRect().height)}px`);
+}
+syncListPanelHeight();
+if("ResizeObserver" in window){
+  new ResizeObserver(syncListPanelHeight).observe(formPanelElement);
+}else{
+  window.addEventListener("resize",syncListPanelHeight);
+}
+initCloud();
+</script>
+</body>
+</html>
