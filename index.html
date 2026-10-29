@@ -428,6 +428,12 @@ const DEFAULT_INCENTIVES_BY_ROLE = { "Head Department":30000, "Head Division":25
 let costsConfig = {...DEFAULT_COSTS, incentiveByRole:{...DEFAULT_INCENTIVES_BY_ROLE}};
 const rupiah = new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 });
 const $ = id => document.getElementById(id);
+function getAdminUids(){
+  const configured = window.APP_ADMIN_UIDS ?? window.APP_ADMIN_UID;
+  return (Array.isArray(configured) ? configured : [configured])
+    .map(uid=>String(uid || "").trim())
+    .filter(Boolean);
+}
 let trips = [];
 let cloudDb = null;
 let cloudAuth = null;
@@ -516,8 +522,8 @@ function initCloud(){
   isAdmin = false;
   applyAccess();
   const config = window.APP_FIREBASE_CONFIG || {};
-  const adminUid = String(window.APP_ADMIN_UID || "").trim();
-  if(!config.apiKey || !config.projectId || !config.appId || !adminUid || /ISI_|GANTI_/i.test(JSON.stringify(config)+adminUid)){
+  const adminUids = getAdminUids();
+  if(!config.apiKey || !config.projectId || !config.appId || !adminUids.length || /ISI_|GANTI_/i.test(JSON.stringify(config)+adminUids.join(","))){
     notify("Lengkapi konfigurasi Firebase dan UID admin pada firebase-config.js sebelum deploy.");
     return;
   }
@@ -542,7 +548,7 @@ function initCloud(){
     },error=>{ notify("Tidak dapat membaca data perjalanan dari Firebase."); console.error(error); });
     cloudAuth.onAuthStateChanged(user=>{
       currentCloudUser = user;
-      isAdmin = Boolean(user && user.uid === adminUid);
+      isAdmin = Boolean(user && adminUids.includes(user.uid));
       if(user && !isAdmin){ cloudAuth.signOut(); notify("Akun ini tidak terdaftar sebagai admin aplikasi."); }
       applyAccess();
     });
@@ -1003,7 +1009,7 @@ $("adminLoginForm").addEventListener("submit",async event=>{
   try{
     const credential=await cloudAuth.signInWithEmailAndPassword($("adminEmail").value.trim(),$("adminPassword").value);
     currentCloudUser=credential.user;
-    isAdmin=Boolean(currentCloudUser && currentCloudUser.uid === String(window.APP_ADMIN_UID || "").trim());
+    isAdmin=Boolean(currentCloudUser && getAdminUids().includes(currentCloudUser.uid));
     applyAccess();
     $("adminLoginModal").close(); $("adminPassword").value="";
   }catch(error){
