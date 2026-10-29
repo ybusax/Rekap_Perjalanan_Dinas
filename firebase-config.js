@@ -8,5 +8,7 @@ window.APP_FIREBASE_CONFIG = {
 };
 
 // Isi dengan UID akun admin dari Firebase Authentication > Users.
-window.APP_ADMIN_UID = "KvVQ1B2SvIXczirouOpiOm5efb03";
-window.APP_ADMIN_UID = "XoMGh0sEUqSdoy1SifRLjeYIQfW2";
+window.APP_ADMIN_UID = [
+  "KvVQ1B2SvIXczirouOpiOm5efb03",
+  "XoMGh0sEUqSdoy1SifRLjeYIQfW2"
+];
