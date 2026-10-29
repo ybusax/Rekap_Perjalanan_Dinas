@@ -94,6 +94,7 @@ h1{font-size:clamp(23px,3vw,32px);letter-spacing:-.035em;line-height:1.15;margin
 .table-wrap{overflow:auto;border-top:1px solid #edf1f5;flex:1;min-height:0}
 table{width:100%;border-collapse:separate;border-spacing:0;white-space:nowrap;font-size:12px}
 thead th{background:#f8fafc;color:#67788a;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.055em;font-weight:800;padding:13px 14px;border-bottom:1px solid #e8edf2}
+#tableWrap thead th{position:sticky;top:0;z-index:2}
 tbody td{padding:14px;border-bottom:1px solid #eff3f6;color:#344a5f;vertical-align:middle}
 tbody tr:hover{background:#fbfdff}
 tbody tr:last-child td{border-bottom:0}
@@ -437,6 +438,7 @@ let isAdmin = false;
 let currentCloudUser = null;
 let persistedTripsById = new Map();
 let tripWriteQueue = Promise.resolve();
+let masterWriteQueue = Promise.resolve();
 let cloudSettingsUnsubscribe = null;
 let cloudTripsUnsubscribe = null;
 
@@ -456,8 +458,11 @@ function applyCloudSettings(saved){
 }
 function saveMasterData(){
   if(!isAdmin || !cloudDb || !cloudSettingsLoaded){ notify("Tunggu database selesai dimuat dan masuk sebagai admin."); return Promise.resolve(); }
-  const data = {employees:EMPLOYEES.map(({name,role})=>({name,role})),offices:OFFICES,costs:costsConfig};
-  return cloudDb.collection("app").doc("settings").set(data).catch(error=>{ notify("Setup gagal disimpan ke database."); console.error(error); });
+  const data = {employees:EMPLOYEES.map(({name,role})=>({name,role})),offices:OFFICES.map(office=>({...office})),costs:{...costsConfig,incentiveByRole:{...costsConfig.incentiveByRole}}};
+  masterWriteQueue = masterWriteQueue.then(()=>cloudDb.collection("app").doc("settings").set(data)).catch(error=>{
+    notify("Setup gagal disimpan ke database."); console.error(error); return false;
+  });
+  return masterWriteQueue;
 }
 function saveTrips(){
   if(!isAdmin || !cloudDb || !cloudTripsLoaded){ notify("Tunggu database selesai dimuat dan masuk sebagai admin."); return Promise.resolve(); }
@@ -660,7 +665,7 @@ function populateLists(){
 function renderSetup(){
   $("employeeSetupRows").innerHTML = EMPLOYEES.map((person,index)=>`<tr><td>${escapeHtml(person.name)}</td><td>${escapeHtml(person.role)}</td><td><div class="setup-actions"><button class="btn btn-quiet" data-master-edit="employee" data-index="${index}" type="button">Edit</button><button class="btn btn-quiet" data-master-delete="employee" data-index="${index}" type="button">Hapus</button></div></td></tr>`).join("");
   $("officeSetupRows").innerHTML = OFFICES.map((office,index)=>`<tr><td>${escapeHtml(office.name)}</td><td>${Number(office.distance)} km</td><td><div class="setup-actions"><button class="btn btn-quiet" data-master-edit="office" data-index="${index}" type="button">Edit</button><button class="btn btn-quiet" data-master-delete="office" data-index="${index}" type="button">Hapus</button></div></td></tr>`).join("");
-  for(const [key,value] of Object.entries(DEFAULT_COSTS)) $("costSetupForm").elements.namedItem(key).value = value;
+  for(const key of Object.keys(DEFAULT_COSTS)) $("costSetupForm").elements.namedItem(key).value = Number(costsConfig[key] ?? DEFAULT_COSTS[key]);
   const roles = [...new Set([...EMPLOYEES.map(person=>person.role),...Object.keys(costsConfig.incentiveByRole)])].sort((a,b)=>a.localeCompare(b,"id"));
   $("roleIncentiveFields").innerHTML = roles.map(role=>`<label class="role-incentive-row"><span>${escapeHtml(role)}</span><input type="number" min="0" step="1000" required aria-label="Insentif jabatan ${escapeHtml(role)}" data-role-incentive="${escapeHtml(role)}" value="${Number(costsConfig.incentiveByRole[role] ?? 0)}"></label>`).join("");
 }
@@ -737,6 +742,7 @@ function addTrip(event){
   const time = costs.driver && costs.vehicle === "Jam Pulang" ? $("jamPulang").value.trim() : "";
   const row = {
     id: `${Date.now()}-${Math.random().toString(36).slice(2,8)}`,
+    createdAt: Date.now(),
     date: dateInputToISO($("tanggal").value), name: costs.employee.name, role: costs.employee.role,
     office: costs.office.name, distance: costs.distance,
     vehicle: costs.driver ? (costs.vehicle === "Jam Pulang" ? `Jam Pulang · ${time}` : "Bermalam") : costs.vehicle,
@@ -794,7 +800,7 @@ function renderTrips(){
     </tr>`).join("");
   $("footCount").textContent = `${trips.length} perjalanan tercatat`;
   $("footSum").textContent = `Total: ${money(total)}`;
-  const tripsByDate = [...trips].sort((a,b)=>String(b.date || "").localeCompare(String(a.date || "")));
+  const tripsByDate = [...trips].sort(compareTripsByDateAndEntry);
   const actionsExpanded = $("tripActionsToggle").getAttribute("aria-expanded") === "true";
   body.innerHTML = tripsByDate.map(item => `
     <tr>
@@ -811,6 +817,17 @@ function renderTrips(){
         <button type="button" class="delete-btn" data-delete="${escapeHtml(item.id)}" aria-label="Hapus perjalanan ${escapeHtml(item.name)}" title="Hapus data"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2m3 0-1 14H6L5 6m4 4v6m6-6v6"/></svg></button>
       </div></td>
     </tr>`).join("");
+}
+function tripEntryTime(item){
+  const explicit = Number(item.createdAt);
+  if(Number.isFinite(explicit) && explicit > 0) return explicit;
+  const match = String(item.id || "").match(/^(\d{10,})-/);
+  return match ? Number(match[1]) : 0;
+}
+function compareTripsByDateAndEntry(a,b){
+  return String(b.date || "").localeCompare(String(a.date || "")) ||
+    tripEntryTime(b) - tripEntryTime(a) ||
+    String(b.id || "").localeCompare(String(a.id || ""));
 }
 function deleteTrip(id){
   if(!isAdmin) return;
@@ -837,7 +854,7 @@ function formatXLSXDate(iso){
 function exportTripsXLSX(){
   if(!trips.length){ notify("Belum ada data untuk diekspor."); return; }
   if(!window.XLSX){ notify("Fitur XLSX tidak tersedia. Periksa koneksi internet lalu muat ulang halaman."); return; }
-  const tripsByDate = [...trips].sort((a,b)=>String(b.date || "").localeCompare(String(a.date || "")));
+  const tripsByDate = [...trips].sort(compareTripsByDateAndEntry);
   const rows = [XLSX_HEADERS, ...tripsByDate.map(item => [
     formatXLSXDate(item.date),item.name,item.role,item.office,Number(item.distance || 0),item.vehicle,
     Number(item.incentive || 0),item.meal,item.fuel,item.rental,item.total
@@ -926,6 +943,7 @@ async function importXLSX(file){
       }
       imported.push({
         id:`${Date.now()}-${Math.random().toString(36).slice(2,8)}`,
+        createdAt:Date.now(),
         date,name,role,office,distance,vehicle,incentive,
         incentiveDisplay:money(incentive),meal,fuel,rental,total
       });
