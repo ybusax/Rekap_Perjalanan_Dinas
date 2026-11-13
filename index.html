@@ -294,7 +294,7 @@ footer{color:#8b98a8;font-size:11px;text-align:center;padding:20px 0 0}
           <button class="btn btn-icon admin-only" id="inputPanelToggle" type="button" aria-label="Sembunyikan panel input" aria-expanded="true" title="Sembunyikan panel input">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16m6-11-3 3 3 3"/></svg>
           </button>
-          <button class="btn btn-icon admin-only" id="resetDataToggle" type="button" aria-label="Tampilkan tombol tindakan" aria-expanded="false" title="Tampilkan tombol tindakan">
+          <button class="btn btn-icon" id="resetDataToggle" type="button" aria-label="Tampilkan tombol tindakan" aria-expanded="false" title="Tampilkan tombol tindakan">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg>
           </button>
           <button class="btn btn-icon admin-only" id="setupBtn" type="button" aria-label="Pengaturan Setup" title="Pengaturan Setup" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Z"/><path d="m19.4 15 .1.1a1.7 1.7 0 1 1-2.4 2.4l-.1-.1a1.7 1.7 0 0 0-2.9 1.2v.2a1.7 1.7 0 1 1-3.4 0v-.2a1.7 1.7 0 0 0-2.9-1.2l-.1.1a1.7 1.7 0 1 1-2.4-2.4l.1-.1a1.7 1.7 0 0 0-1.2-2.9H4a1.7 1.7 0 1 1 0-3.4h.2a1.7 1.7 0 0 0 1.2-2.9l-.1-.1a1.7 1.7 0 1 1 2.4-2.4l.1.1a1.7 1.7 0 0 0 2.9-1.2V2a1.7 1.7 0 1 1 3.4 0v.2a1.7 1.7 0 0 0 2.9 1.2l.1-.1a1.7 1.7 0 1 1 2.4 2.4l-.1.1a1.7 1.7 0 0 0 1.2 2.9h.2a1.7 1.7 0 1 1 0 3.4h-.2a1.7 1.7 0 0 0-1.2 2.9Z"/></svg></button>
@@ -303,7 +303,7 @@ footer{color:#8b98a8;font-size:11px;text-align:center;padding:20px 0 0}
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5M12 3v12"/></svg>
             Import
           </button>
-          <div class="export-action" id="exportAction">
+          <div class="export-action" id="exportAction" hidden>
             <button class="btn btn-outline" id="exportBtn" type="button" aria-haspopup="menu" aria-controls="exportMenu" aria-expanded="false">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5M12 15V3"/></svg>
               Ekspor
@@ -517,8 +517,9 @@ function applyAccess(){
   document.querySelectorAll(".admin-only").forEach(element=>element.hidden = !isAdmin);
   $("adminLoginBtn").hidden = isAdmin;
   $("adminLogoutBtn").hidden = !isAdmin;
+  const actionsOpen = $("resetDataToggle").getAttribute("aria-expanded") === "true";
+  $("exportAction").hidden = !actionsOpen;
   if(isAdmin){
-    const actionsOpen = $("resetDataToggle").getAttribute("aria-expanded") === "true";
     ["setupBtn","resetDataBtn","importBtn"].forEach(id=>$(id).hidden = !actionsOpen);
     document.querySelectorAll(".row-actions").forEach(actions=>actions.hidden = $("tripActionsToggle").getAttribute("aria-expanded") !== "true");
     setCloudStatus("Admin");
@@ -667,7 +668,7 @@ function renderParticipants(){
     const currentEmployee=findEmployee(person.name);
     if(currentEmployee && currentEmployee.role!==person.role){
       person.role=currentEmployee.role;
-      person.vehicle="";
+      person.vehicle=currentEmployee.role==="Petugas Sopir"?"":"Kantor";
       person.time="";
     }
     const driver = person.role === "Petugas Sopir";
@@ -682,7 +683,7 @@ function renderParticipants(){
 }
 function addParticipant(employee){
   if(participants.some(person=>norm(person.name)===norm(employee.name))){ notify("Nama tersebut sudah ditambahkan."); return; }
-  participants.push({name:employee.name,role:employee.role,vehicle:"",time:""});
+  participants.push({name:employee.name,role:employee.role,vehicle:employee.role==="Petugas Sopir"?"":"Kantor",time:""});
   $("namaError").classList.remove("show");
   renderParticipants();
 }
@@ -1224,8 +1225,9 @@ $("closeDuplicateTrip").addEventListener("click",()=>{
 });
 $("resetDataToggle").addEventListener("click",()=>{
   closeExportMenu();
-  const reveal = $("setupBtn").hidden;
-  ["setupBtn","resetDataBtn","importBtn","exportAction"].forEach(id=>$(id).hidden = !reveal);
+  const reveal = $("resetDataToggle").getAttribute("aria-expanded") !== "true";
+  ["setupBtn","resetDataBtn","importBtn"].forEach(id=>$(id).hidden = !isAdmin || !reveal);
+  $("exportAction").hidden = !reveal;
   $("resetDataToggle").setAttribute("aria-expanded",String(reveal));
   $("resetDataToggle").setAttribute("aria-label",reveal ? "Sembunyikan tombol tindakan" : "Tampilkan tombol tindakan");
   $("resetDataToggle").title = reveal ? "Sembunyikan tombol tindakan" : "Tampilkan tombol tindakan";
