@@ -302,8 +302,8 @@ footer{color:#8b98a8;font-size:11px;text-align:center;padding:20px 0 0}
               Ekspor
             </button>
             <div class="export-menu" id="exportMenu" role="menu" hidden>
-              <button class="export-choice" id="exportTripsBtn" type="button" role="menuitem">Ekspor Perjalanan</button>
-              <button class="export-choice" id="exportSummaryBtn" type="button" role="menuitem">Ekspor Ringkasan</button>
+              <button class="export-choice" id="exportSummaryBtn" type="button" role="menuitem">Ringkasan</button>
+              <button class="export-choice" id="exportTripsBtn" type="button" role="menuitem">Perjalanan</button>
             </div>
           </div>
         </div>
@@ -633,6 +633,21 @@ function updateOffice(){
 function updateDatePreview(){
   const isoDate = dateInputToISO($("tanggal").value);
   $("tanggalPreview").textContent = isoDate ? formatDate(isoDate) : "Format: Hari, DD/MM/YYYY";
+  calculatePreview();
+}
+function previousISODate(isoDate){
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(String(isoDate || ""))) return "";
+  const date = new Date(`${isoDate}T00:00:00Z`);
+  if(Number.isNaN(date.getTime())) return "";
+  date.setUTCDate(date.getUTCDate()-1);
+  return date.toISOString().slice(0,10);
+}
+function hasSameOfficePreviousDay(employee,office,isoDate){
+  if(!employee || !office || !isoDate) return false;
+  const previousDate = previousISODate(isoDate);
+  return trips.some(item=>item.date === previousDate &&
+    norm(item.name) === norm(employee.name) &&
+    norm(item.office) === norm(office.name));
 }
 function computeCosts(){
   const employee = findEmployee($("nama").value);
@@ -640,6 +655,8 @@ function computeCosts(){
   const role = employee ? employee.role : "";
   const vehicle = selectedVehicle();
   const driver = role === "Petugas Sopir";
+  const tripDate = dateInputToISO($("tanggal").value);
+  const sameOfficePreviousDay = hasSameOfficePreviousDay(employee,office,tripDate);
   const distance = office ? Number(office.distance) : 0;
   let incentive = Number(costsConfig.incentiveByRole[role] ?? 0);
   let fuel = 0;
@@ -650,8 +667,8 @@ function computeCosts(){
     fuel = 0; rental = 0;
   }
   if(!driver){
-    if(vehicle === "Motor Pribadi"){ fuel = costsConfig.motorFuelRate * distance; rental = costsConfig.motorRental; }
-    if(vehicle === "Mobil Pribadi"){ fuel = costsConfig.carFuelRate * distance; rental = costsConfig.carRental; }
+    if(vehicle === "Motor Pribadi" && !sameOfficePreviousDay){ fuel = costsConfig.motorFuelRate * distance; rental = costsConfig.motorRental; }
+    if(vehicle === "Mobil Pribadi" && !sameOfficePreviousDay){ fuel = costsConfig.carFuelRate * distance; rental = costsConfig.carRental; }
   }
   const total = incentive + costsConfig.meal + fuel + rental;
   return { incentive, meal: costsConfig.meal, fuel, rental, total, distance, driver, employee, office, vehicle };
@@ -1096,7 +1113,7 @@ $("exportBtn").addEventListener("click",()=>{
   const opening = $("exportMenu").hidden;
   $("exportMenu").hidden = !opening;
   $("exportBtn").setAttribute("aria-expanded",String(opening));
-  if(opening) $("exportTripsBtn").focus();
+  if(opening) $("exportSummaryBtn").focus();
 });
 $("exportTripsBtn").addEventListener("click",()=>{ closeExportMenu(); exportTripsXLSX(); });
 $("exportSummaryBtn").addEventListener("click",()=>{ closeExportMenu(); exportSummaryXLSX(); });
