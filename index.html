@@ -60,6 +60,23 @@ h1{font-size:clamp(23px,3vw,32px);letter-spacing:-.035em;line-height:1.15;margin
 .field input:focus,.field select:focus{border-color:#0f9488;box-shadow:0 0 0 3px rgba(15,148,136,.12)}
 .field input[readonly]{background:#f6f8fb;color:#52657a}
 .field input::placeholder{color:#a0adba}
+.autocomplete-wrap{position:relative}
+.autocomplete-options{position:absolute;top:calc(100% + 5px);left:0;right:0;z-index:30;max-height:230px;overflow:auto;padding:5px;background:#fff;border:1px solid #dbe4ec;border-radius:10px;box-shadow:0 12px 26px rgba(15,35,55,.15)}
+.autocomplete-options[hidden]{display:none!important}
+.autocomplete-option{display:flex;width:100%;justify-content:space-between;align-items:center;gap:12px;padding:9px 10px;border:0;border-radius:7px;background:#fff;color:#263d52;text-align:left;font-size:12px;cursor:pointer}
+.autocomplete-option:hover,.autocomplete-option[aria-selected="true"]{background:#edf7f5;color:#075e56}
+.autocomplete-option small{color:#8190a0;font-size:10px;white-space:nowrap}
+.participant-list{display:grid;gap:8px;margin-top:10px}
+.participant-empty{padding:10px;border:1px dashed #d9e2ec;border-radius:9px;color:#8795a5;font-size:11px}
+.participant-entry{padding:10px;border:1px solid #e5ebf1;border-radius:10px;background:#f9fbfc}
+.participant-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}
+.participant-identity{min-width:0}.participant-identity strong{display:block;overflow:hidden;text-overflow:ellipsis;font-size:11px;color:#20374b}.participant-identity small{font-size:10px;color:#738398}
+.participant-remove{border:0;background:transparent;color:#8492a2;font-size:18px;line-height:1;padding:3px 6px;border-radius:6px}.participant-remove:hover{background:#fff1f2;color:#be123c}
+.participant-controls{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.participant-controls label{display:grid;gap:4px;font-size:10px;font-weight:700;color:#52657a}
+.participant-controls select,.participant-controls input{width:100%;height:36px;min-width:0;padding:0 8px;border:1px solid #d9e2ec;border-radius:8px;background:#fff;color:#142b40;font:inherit;font-size:11px}
+.participant-controls [hidden]{display:none!important}
+.participant-time-hint{grid-column:1/-1;color:#8190a0;font-size:10px;margin-top:-4px}
 .field-hint{color:#8795a5;font-size:11px;margin:6px 0 0}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .conditional{display:none}
@@ -230,32 +247,22 @@ footer{color:#8b98a8;font-size:11px;text-align:center;padding:20px 0 0}
         </div>
         <div class="field">
           <label for="nama">Nama <span class="required">*</span></label>
-          <input id="nama" name="nama" type="text" autocomplete="on" list="namaList" placeholder="Mulai ketik nama pegawai..." required>
-          <datalist id="namaList"></datalist>
-          <div class="field-hint" id="jabatanPreview">Jabatan otomatis</div>
+          <div class="autocomplete-wrap">
+            <input id="nama" name="nama" type="text" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="namaSuggestions" placeholder="Ketik lalu pilih nama pegawai...">
+            <div class="autocomplete-options" id="namaSuggestions" role="listbox" hidden></div>
+          </div>
+          <div class="participant-list" id="participantList" aria-live="polite"></div>
+          <div class="field-hint">Pilih beberapa nama bila berangkat pada tanggal dan kantor yang sama.</div>
           <div class="field-error" id="namaError">Pilih nama yang terdaftar pada daftar pegawai.</div>
         </div>
         <div class="field">
           <label for="kantor">Kantor tujuan <span class="required">*</span></label>
-          <input id="kantor" name="kantor" type="text" autocomplete="on" list="kantorList" placeholder="Mulai ketik nama kantor..." required>
+          <div class="autocomplete-wrap">
+            <input id="kantor" name="kantor" type="text" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="kantorSuggestions" placeholder="Mulai ketik nama kantor..." required>
+            <div class="autocomplete-options" id="kantorSuggestions" role="listbox" hidden></div>
+          </div>
           <div class="field-hint" id="jarakLabel">Jarak kantor otomatis</div>
-          <datalist id="kantorList"></datalist>
           <div class="field-error" id="kantorError">Pilih kantor yang tersedia di daftar Kantor & Jarak.</div>
-        </div>
-        <div class="field">
-          <label for="kendaraan">Kendaraan / status sopir <span class="required">*</span></label>
-          <select id="kendaraan" name="kendaraan" required>
-            <option value="">Pilih kendaraan...</option>
-            <option value="Kantor">Kantor</option>
-            <option value="Motor Pribadi">Motor Pribadi</option>
-            <option value="Mobil Pribadi">Mobil Pribadi</option>
-          </select>
-        </div>
-        <div class="field conditional" id="jamWrap">
-          <label for="jamPulang">Jam pulang <span class="required">*</span></label>
-          <input id="jamPulang" name="jamPulang" type="text" inputmode="numeric" placeholder="14.50" maxlength="5">
-          <div class="field-hint">Gunakan format HH.MM, contoh 14.50. Insentif diberikan jika sesudah 16.45.</div>
-          <div class="field-error" id="jamError">Masukkan jam yang valid dalam format HH.MM (00.00–23.59).</div>
         </div>
         <hr class="divider">
         <div class="preview-title">Perkiraan biaya</div>
@@ -435,6 +442,8 @@ function getAdminUids(){
     .filter(Boolean);
 }
 let trips = [];
+let participants = [];
+const autocompleteControllers = {};
 let cloudDb = null;
 let cloudAuth = null;
 let cloudReady = false;
@@ -460,7 +469,7 @@ function applyCloudSettings(saved){
     }
     costsConfig = {...baseCosts,incentiveByRole};
   }
-  populateLists(); renderSetup(); updateName(); updateOffice(); calculatePreview(); renderTrips();
+  populateLists(); renderSetup(); renderParticipants(); updateOffice(); calculatePreview(); renderTrips();
 }
 function saveMasterData(){
   if(!isAdmin || !cloudDb || !cloudSettingsLoaded){ notify("Tunggu database selesai dimuat dan masuk sebagai admin."); return Promise.resolve(); }
@@ -580,7 +589,7 @@ function isoToDateInput(iso){
   return match ? `${match[3]}/${match[2]}/${match[1]}` : "";
 }
 function formatDate(iso){
-  if(!iso) return "—";
+  if(!iso) return "â€”";
   const parts = iso.split("-").map(Number);
   if(parts.length !== 3 || parts.some(n => !n)) return iso;
   const date = new Date(parts[0],parts[1]-1,parts[2],12);
@@ -592,38 +601,7 @@ function minutesFromTime(value){
   if(!match) return null;
   return Number(match[1])*60 + Number(match[2]);
 }
-function currentRole(){
-  const employee = findEmployee($("nama").value);
-  return employee ? employee.role : "";
-}
-function isDriver(){ return currentRole() === "Petugas Sopir"; }
 function currentOffice(){ return findOffice($("kantor").value); }
-function selectedVehicle(){ return $("kendaraan").value; }
-
-function updateName(){
-  const employee = findEmployee($("nama").value);
-  $("jabatanPreview").textContent = employee ? employee.role : "Jabatan otomatis";
-  $("namaError").classList.remove("show");
-  updateVehicleOptions();
-  calculatePreview();
-}
-function updateVehicleOptions(){
-  const select = $("kendaraan");
-  const previous = select.value;
-  const driver = isDriver();
-  const mode = driver ? "driver" : "vehicle";
-  if(select.dataset.mode !== mode){
-    select.innerHTML = driver
-      ? '<option value="">Pilih status sopir...</option><option value="Bermalam">Bermalam</option><option value="Jam Pulang">Jam Pulang</option>'
-      : '<option value="">Pilih kendaraan...</option><option value="Kantor">Kantor</option><option value="Motor Pribadi">Motor Pribadi</option><option value="Mobil Pribadi">Mobil Pribadi</option>';
-    select.dataset.mode = mode;
-  }
-  if([...select.options].some(option => option.value === previous)) select.value = previous;
-  $("jamWrap").classList.toggle("show", driver && select.value === "Jam Pulang");
-  if(!(driver && select.value === "Jam Pulang")) $("jamPulang").value = "";
-  $("jamError").classList.remove("show");
-  calculatePreview();
-}
 function updateOffice(){
   const office = currentOffice();
   $("jarakLabel").textContent = office ? `${office.distance} km` : "Jarak kantor otomatis";
@@ -650,28 +628,63 @@ function hasSameOfficePreviousDay(employee,office,isoDate){
     norm(item.office) === norm(office.name));
 }
 function computeCosts(){
-  const employee = findEmployee($("nama").value);
   const office = currentOffice();
-  const role = employee ? employee.role : "";
-  const vehicle = selectedVehicle();
-  const driver = role === "Petugas Sopir";
   const tripDate = dateInputToISO($("tanggal").value);
-  const sameOfficePreviousDay = hasSameOfficePreviousDay(employee,office,tripDate);
+  const totals = {incentive:0,meal:0,fuel:0,rental:0,total:0};
+  for(const participant of participants){
+    const cost = computeParticipantCosts(participant,office,tripDate);
+    for(const key of Object.keys(totals)) totals[key] += cost[key];
+  }
+  return totals;
+}
+function computeParticipantCosts(participant,office,tripDate){
+  const role = participant.role;
+  const vehicle = participant.vehicle;
+  const driver = role === "Petugas Sopir";
   const distance = office ? Number(office.distance) : 0;
+  const sameOfficePreviousDay = hasSameOfficePreviousDay(participant,office,tripDate);
   let incentive = Number(costsConfig.incentiveByRole[role] ?? 0);
   let fuel = 0;
   let rental = 0;
   if(driver){
-    const time = minutesFromTime($("jamPulang").value);
+    const time = minutesFromTime(participant.time);
     incentive = vehicle === "Bermalam" ? Number(costsConfig.incentiveByRole[role] ?? 0) : vehicle === "Jam Pulang" && time !== null && time > (16*60+45) ? Number(costsConfig.incentiveByRole[role] ?? 0) : 0;
-    fuel = 0; rental = 0;
+  }else if(!sameOfficePreviousDay){
+    if(vehicle === "Motor Pribadi"){ fuel = costsConfig.motorFuelRate * distance; rental = costsConfig.motorRental; }
+    if(vehicle === "Mobil Pribadi"){ fuel = costsConfig.carFuelRate * distance; rental = costsConfig.carRental; }
   }
-  if(!driver){
-    if(vehicle === "Motor Pribadi" && !sameOfficePreviousDay){ fuel = costsConfig.motorFuelRate * distance; rental = costsConfig.motorRental; }
-    if(vehicle === "Mobil Pribadi" && !sameOfficePreviousDay){ fuel = costsConfig.carFuelRate * distance; rental = costsConfig.carRental; }
+  const meal = costsConfig.meal;
+  return {incentive,meal,fuel,rental,total:incentive+meal+fuel+rental,distance,driver,office,vehicle};
+}
+function renderParticipants(){
+  const container = $("participantList");
+  if(!participants.length){
+    container.innerHTML = '<div class="participant-empty">Belum ada peserta dipilih.</div>';
+    calculatePreview();
+    return;
   }
-  const total = incentive + costsConfig.meal + fuel + rental;
-  return { incentive, meal: costsConfig.meal, fuel, rental, total, distance, driver, employee, office, vehicle };
+  container.innerHTML = participants.map((person,index)=>{
+    const currentEmployee=findEmployee(person.name);
+    if(currentEmployee && currentEmployee.role!==person.role){
+      person.role=currentEmployee.role;
+      person.vehicle="";
+      person.time="";
+    }
+    const driver = person.role === "Petugas Sopir";
+    const options = driver
+      ? [['','Pilih status sopir...'],['Bermalam','Bermalam'],['Jam Pulang','Jam Pulang']]
+      : [['','Pilih kendaraan...'],['Kantor','Kantor'],['Motor Pribadi','Motor Pribadi'],['Mobil Pribadi','Mobil Pribadi']];
+    const optionMarkup = options.map(([value,label])=>`<option value="${value}" ${person.vehicle===value?'selected':''}>${label}</option>`).join("");
+    const timeMarkup = driver ? `<label data-participant-time ${person.vehicle==='Jam Pulang'?'':'hidden'}>Jam pulang<input type="text" inputmode="numeric" maxlength="5" placeholder="16.50" aria-label="Jam pulang ${escapeHtml(person.name)}" data-participant-time-input="${index}" value="${escapeHtml(person.time)}"></label>` : "";
+    return `<div class="participant-entry" data-participant-index="${index}"><div class="participant-head"><div class="participant-identity"><strong>${escapeHtml(person.name)}</strong><small>${escapeHtml(person.role)}</small></div><button class="participant-remove" type="button" aria-label="Hapus ${escapeHtml(person.name)} dari peserta" data-remove-participant="${index}">&times;</button></div><div class="participant-controls"><label>${driver?'Status sopir':'Kendaraan'}<select data-participant-vehicle="${index}">${optionMarkup}</select></label>${timeMarkup}</div>${driver&&person.vehicle==='Jam Pulang'?'<div class="participant-time-hint">Insentif diberikan jika pulang sesudah 16.45.</div>':''}</div>`;
+  }).join("");
+  calculatePreview();
+}
+function addParticipant(employee){
+  if(participants.some(person=>norm(person.name)===norm(employee.name))){ notify("Nama tersebut sudah ditambahkan."); return; }
+  participants.push({name:employee.name,role:employee.role,vehicle:"",time:""});
+  $("namaError").classList.remove("show");
+  renderParticipants();
 }
 function calculatePreview(){
   const costs = computeCosts();
@@ -682,8 +695,92 @@ function calculatePreview(){
   $("prevTotal").textContent = money(costs.total);
 }
 function populateLists(){
-  $("namaList").innerHTML = EMPLOYEES.map(person => `<option value="${escapeHtml(person.name)}"></option>`).join("");
-  $("kantorList").innerHTML = OFFICES.map(office => `<option value="${escapeHtml(office.name)}"></option>`).join("");
+  autocompleteControllers.nama?.refresh();
+  autocompleteControllers.kantor?.refresh();
+}
+function bindAutocomplete(inputId,panelId,getOptions,onSelect){
+  const input = $(inputId);
+  const panel = $(panelId);
+  let options = [];
+  let activeIndex = -1;
+  const close = ()=>{
+    panel.hidden = true;
+    input.setAttribute("aria-expanded","false");
+    input.removeAttribute("aria-activedescendant");
+    activeIndex = -1;
+  };
+  const draw = ()=>{
+    if(!options.length){
+      panel.innerHTML = '<div class="participant-empty" role="option" aria-disabled="true">Tidak ada pilihan yang cocok.</div>';
+      panel.hidden = false;
+      input.setAttribute("aria-expanded","true");
+      input.removeAttribute("aria-activedescendant");
+      return;
+    }
+    panel.innerHTML = options.map((option,index)=>`<button class="autocomplete-option" type="button" role="option" id="${panelId}-option-${index}" aria-selected="${index===activeIndex}" data-autocomplete-index="${index}"><span>${escapeHtml(option.value)}</span><small>${escapeHtml(option.detail || "")}</small></button>`).join("");
+    panel.hidden = false;
+    input.setAttribute("aria-expanded","true");
+    if(activeIndex>=0){
+      input.setAttribute("aria-activedescendant",`${panelId}-option-${activeIndex}`);
+      panel.querySelector(`[data-autocomplete-index="${activeIndex}"]`)?.scrollIntoView({block:"nearest"});
+    }else input.removeAttribute("aria-activedescendant");
+  };
+  const refresh = ()=>{
+    const query = norm(input.value);
+    if(!query){ options=[]; close(); return; }
+    options = getOptions().filter(option=>norm(option.value).includes(query));
+    activeIndex = -1;
+    draw();
+  };
+  const choose = option=>{
+    if(!option) return;
+    onSelect(option);
+    close();
+  };
+  input.addEventListener("input",()=>{
+    refresh();
+    if(inputId === "nama") $("namaError").classList.remove("show");
+    if(inputId === "kantor") updateOffice();
+  });
+  input.addEventListener("focus",()=>{ if(input.value.trim()) refresh(); });
+  input.addEventListener("keydown",event=>{
+    if(event.key === "Escape" && !panel.hidden){ close(); return; }
+    if(event.key === "ArrowDown" || event.key === "ArrowUp"){
+      const wasHidden=panel.hidden;
+      if(wasHidden) refresh();
+      if(options.length){
+        event.preventDefault();
+        activeIndex = wasHidden ? (event.key === "ArrowDown" ? 0 : options.length-1) : (activeIndex + (event.key === "ArrowDown" ? 1 : -1) + options.length) % options.length;
+        draw();
+      }
+      return;
+    }
+    if(event.key === "Enter" && !panel.hidden && options.length){
+      event.preventDefault(); choose(options[activeIndex>=0?activeIndex:0]); return;
+    }
+    if(event.key === "Tab" && !panel.hidden && options.length) choose(options[activeIndex>=0?activeIndex:0]);
+  });
+  panel.addEventListener("mousedown",event=>event.preventDefault());
+  panel.addEventListener("click",event=>{
+    const button = event.target.closest("[data-autocomplete-index]");
+    if(button) choose(options[Number(button.dataset.autocompleteIndex)]);
+  });
+  document.addEventListener("pointerdown",event=>{
+    if(!event.target.closest(`#${inputId}`) && !event.target.closest(`#${panelId}`)) close();
+  });
+  autocompleteControllers[inputId] = {refresh,close};
+}
+function initializeAutocompletes(){
+  bindAutocomplete("nama","namaSuggestions",()=>EMPLOYEES.map(person=>({value:person.name,detail:person.role})),option=>{
+    const employee = findEmployee(option.value);
+    if(employee) addParticipant(employee);
+    $("nama").value = "";
+  });
+  bindAutocomplete("kantor","kantorSuggestions",()=>OFFICES.map(office=>({value:office.name,detail:`${office.distance} km`})),option=>{
+    const office = findOffice(option.value);
+    if(office) $("kantor").value = office.name;
+    updateOffice();
+  });
 }
 function renderSetup(){
   $("employeeSetupRows").innerHTML = EMPLOYEES.map((person,index)=>`<tr><td>${escapeHtml(person.name)}</td><td>${escapeHtml(person.role)}</td><td><div class="setup-actions"><button class="btn btn-quiet" data-master-edit="employee" data-index="${index}" type="button">Edit</button><button class="btn btn-quiet" data-master-delete="employee" data-index="${index}" type="button">Hapus</button></div></td></tr>`).join("");
@@ -706,7 +803,7 @@ function openMasterEditor(type,index){
   $("masterEditModal").showModal();
 }
 function refreshMasterData(){
-  saveMasterData(); populateLists(); renderSetup(); updateName(); updateOffice();
+  saveMasterData(); populateLists(); renderSetup(); renderParticipants(); updateOffice();
 }
 function addMasterRecord(type,form){
   const values = Object.fromEntries(new FormData(form).entries());
@@ -737,23 +834,29 @@ function deleteMasterRecord(type,index){
 }
 function validateForm(){
   let valid = true;
-  const employee = findEmployee($("nama").value);
   const office = currentOffice();
-  if(!employee){
+  if(!participants.length || $("nama").value.trim()){
     $("namaError").classList.add("show"); valid = false;
   }
   if(!office){
     $("kantorError").classList.add("show"); valid = false;
   }
   const tripDate = dateInputToISO($("tanggal").value);
-  if(employee && tripDate && trips.some(item=>item.date === tripDate && norm(item.name) === norm(employee.name))){
-    $("duplicateTripModal").showModal();
-    return false;
-  }
   if(!tripDate){ $("tanggal").setCustomValidity("Masukkan tanggal yang valid dengan format DD/MM/YYYY."); $("tanggal").reportValidity(); valid = false; }
-  if(!selectedVehicle()){ $("kendaraan").reportValidity(); valid = false; }
-  if(isDriver() && selectedVehicle() === "Jam Pulang" && minutesFromTime($("jamPulang").value) === null){
-    $("jamError").classList.add("show"); $("jamPulang").focus(); valid = false;
+  if(!valid) return false;
+  if(participants.some(person=>trips.some(item=>item.date===tripDate && norm(item.name)===norm(person.name)))){
+    $("duplicateTripModal").showModal(); return false;
+  }
+  for(let index=0;index<participants.length;index++){
+    const person=participants[index];
+    if(!person.vehicle){
+      $("participantList").querySelector(`[data-participant-vehicle="${index}"]`)?.focus();
+      notify(`Pilih kendaraan atau status untuk ${person.name}.`); return false;
+    }
+    if(person.role==="Petugas Sopir" && person.vehicle==="Jam Pulang" && minutesFromTime(person.time)===null){
+      $("participantList").querySelector(`[data-participant-time-input="${index}"]`)?.focus();
+      notify(`Masukkan jam pulang ${person.name} dengan format HH.MM.`); return false;
+    }
   }
   return valid;
 }
@@ -761,30 +864,20 @@ function addTrip(event){
   event.preventDefault();
   if(!isAdmin){ notify("Masuk sebagai admin untuk menambah data."); return; }
   if(!validateForm()) return;
-  const costs = computeCosts();
-  const time = costs.driver && costs.vehicle === "Jam Pulang" ? $("jamPulang").value.trim() : "";
-  const row = {
-    id: `${Date.now()}-${Math.random().toString(36).slice(2,8)}`,
-    createdAt: Date.now(),
-    date: dateInputToISO($("tanggal").value), name: costs.employee.name, role: costs.employee.role,
-    office: costs.office.name, distance: costs.distance,
-    vehicle: costs.driver ? (costs.vehicle === "Jam Pulang" ? `Jam Pulang · ${time}` : "Bermalam") : costs.vehicle,
-    incentive: costs.incentive, incentiveDisplay: money(costs.incentive),
-    meal: costs.meal, fuel: costs.fuel, rental: costs.rental, total: costs.total
-  };
-  trips.unshift(row);
+  const office=currentOffice();
+  const tripDate=dateInputToISO($("tanggal").value);
+  const createdAt=Date.now();
+  const rows=participants.map((person,index)=>{
+    const costs=computeParticipantCosts(person,office,tripDate);
+    const vehicle=person.role==="Petugas Sopir" ? (person.vehicle==="Jam Pulang" ? `Jam Pulang · ${person.time}` : "Bermalam") : person.vehicle;
+    const timestamp=createdAt+participants.length-index;
+    return {id:`${timestamp}-${Math.random().toString(36).slice(2,8)}`,createdAt:timestamp,date:tripDate,name:person.name,role:person.role,office:office.name,distance:costs.distance,vehicle,incentive:costs.incentive,incentiveDisplay:money(costs.incentive),meal:costs.meal,fuel:costs.fuel,rental:costs.rental,total:costs.total};
+  });
+  trips.unshift(...rows);
   void saveTrips();
   renderTrips();
-  $("tripForm").reset();
-  $("tanggal").value = isoToDateInput(localISODate());
-  $("jabatanPreview").textContent = "Jabatan otomatis";
-  $("jamWrap").classList.remove("show");
-  $("jarakLabel").textContent = "Jarak kantor otomatis";
-  updateDatePreview();
-  updateVehicleOptions();
-  calculatePreview();
-  $("tanggal").focus();
-  notify("Done");
+  resetForm();
+  notify(`${rows.length} perjalanan berhasil ditambahkan.`);
 }
 function summarizeTrips(){
   const byName = new Map();
@@ -986,14 +1079,15 @@ function notify(message){
 }
 function resetForm(){
   $("tripForm").reset();
+  participants=[];
+  renderParticipants();
   $("tanggal").value = isoToDateInput(localISODate());
-  $("jabatanPreview").textContent = "Jabatan otomatis";
-  $("jamWrap").classList.remove("show");
   $("namaError").classList.remove("show");
   $("kantorError").classList.remove("show");
-  $("jamError").classList.remove("show");
+  autocompleteControllers.nama?.close();
+  autocompleteControllers.kantor?.close();
   $("jarakLabel").textContent = "Jarak kantor otomatis";
-  updateDatePreview(); updateVehicleOptions(); calculatePreview();
+  updateDatePreview(); updateOffice(); calculatePreview();
   $("tanggal").focus();
 }
 function resetAllTrips(){
@@ -1041,34 +1135,30 @@ $("adminLogoutBtn").addEventListener("click",async()=>{
   isAdmin=false;
   applyAccess();
 });
-$("nama").addEventListener("input",updateName);
-$("nama").addEventListener("change",()=>{
-  const emp=findEmployee($("nama").value);
-  if(emp) $("nama").value=emp.name;
-  updateName();
+$("participantList").addEventListener("change",event=>{
+  const select=event.target.closest("[data-participant-vehicle]");
+  if(!select) return;
+  const person=participants[Number(select.dataset.participantVehicle)];
+  if(!person) return;
+  person.vehicle=select.value;
+  if(person.vehicle!=="Jam Pulang") person.time="";
+  renderParticipants();
+  if(person.role==="Petugas Sopir" && person.vehicle==="Jam Pulang") $("participantList").querySelector(`[data-participant-time-input="${participants.indexOf(person)}"]`)?.focus();
 });
-$("kantor").addEventListener("input",updateOffice);
-$("kantor").addEventListener("change",()=>{
-  const office=findOffice($("kantor").value);
-  if(office) $("kantor").value=office.name;
-  updateOffice();
-});
-$("tanggal").addEventListener("change",updateDatePreview);
-$("tanggal").addEventListener("input",()=>{
-  $("tanggal").setCustomValidity("");
-  updateDatePreview();
-});
-$("kendaraan").addEventListener("change",()=>{
-  $("jamWrap").classList.toggle("show",isDriver() && selectedVehicle()==="Jam Pulang");
-  if(!(isDriver() && selectedVehicle()==="Jam Pulang")) $("jamPulang").value="";
+$("participantList").addEventListener("input",event=>{
+  const input=event.target.closest("[data-participant-time-input]");
+  if(!input) return;
+  const person=participants[Number(input.dataset.participantTimeInput)];
+  if(!person) return;
+  if(/^\d{2}:\d{2}$/.test(input.value)) input.value=input.value.replace(":",".");
+  person.time=input.value.trim();
   calculatePreview();
 });
-$("jamPulang").addEventListener("input",()=>{
-  $("jamError").classList.remove("show");
-  // If users type 14:50, standardize to the requested 14.50 format.
-  const value=$("jamPulang").value;
-  if(/^\d{2}:\d{2}$/.test(value)) $("jamPulang").value=value.replace(":",".");
-  calculatePreview();
+$("participantList").addEventListener("click",event=>{
+  const button=event.target.closest("[data-remove-participant]");
+  if(!button) return;
+  participants.splice(Number(button.dataset.removeParticipant),1);
+  renderParticipants();
 });
 $("tripForm").addEventListener("submit",addTrip);
 $("resetBtn").addEventListener("click",resetForm);
@@ -1161,12 +1251,13 @@ $("inputPanelToggle").addEventListener("click",()=>{
 });
 $("confirmResetData").addEventListener("click",resetAllTrips);
 
+initializeAutocompletes();
 populateLists();
 renderSetup();
+renderParticipants();
 $("tanggal").value=isoToDateInput(localISODate());
 updateDatePreview();
 renderTrips();
-updateVehicleOptions();
 const formPanelElement = document.querySelector(".form-panel");
 const layoutElement = document.querySelector(".layout");
 function syncListPanelHeight(){
