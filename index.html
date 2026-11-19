@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#14532d">
-<title>Rekap Perjalanan Dinas</title>
+<meta name="theme-color" content="#E4002B">
+<title>Rekap Perjalanan Dinas — Industrial</title>
 <style>
 :root{
   --ink:#12263a;--muted:#64748b;--line:#e2e8f0;--paper:#ffffff;--canvas:#f3f6fa;
@@ -186,6 +186,97 @@ footer{color:#8b98a8;font-size:11px;text-align:center;padding:20px 0 0}
 @media print{
   body{background:#fff;font-size:10px}.app-shell{max-width:none;padding:0}.hero{background:#fff;color:#111;padding:0 0 15px;border-radius:0;box-shadow:none;border-bottom:2px solid #183c50}.hero p,.hero-badge{display:none}.eyebrow{color:#666;opacity:1}h1{color:#111;font-size:22px}.layout{display:block}.form-panel,.toolbar,.delete-col,.list-foot,footer{display:none!important}.panel{box-shadow:none;border:1px solid #ddd;border-radius:8px}.main-panel-head{padding:12px}.table-wrap{overflow:visible}table{font-size:9px;white-space:normal}thead th,tbody td{padding:7px 6px}.person-cell{max-width:none}.pill{padding:3px 5px}.main-panel-head{display:block}.panel-sub{margin-top:4px}
 }
+
+/* Swiss direction: deliberate grid, one type family, one accent. */
+:root{
+  --ink:#111111;--muted:#666666;--line:#D7D7D7;--paper:#FFFFFF;--canvas:#F7F7F8;
+  --navy:#111111;--navy2:#111111;--teal:#E4002B;--teal-light:#FFF0F2;
+  --blue-light:#F1F1F1;--amber-light:#F1F1F1;--shadow:none;--radius:0;
+}
+*{box-sizing:border-box}
+body{background:var(--canvas);color:var(--ink);font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:13px;line-height:1.45}
+button,input,select{font-family:inherit}
+button{cursor:pointer}
+.autocomplete-options,.participant-empty,.participant-entry,.step-tag,.pill,.export-menu,.modal,.setup-card,.setup-subcard,.preview-item{border-radius:0}
+.autocomplete-options,.export-menu{box-shadow:none}
+.app-shell{max-width:1500px;margin:0 auto;padding:0 32px 38px}
+.hero{min-height:204px;border:0;border-bottom:1px solid var(--ink);border-radius:0;background:var(--paper);box-shadow:none;padding:30px 0 24px;position:relative;overflow:hidden}
+.hero:before{content:"";position:absolute;left:46%;right:0;top:0;bottom:0;background:repeating-linear-gradient(90deg,transparent 0,transparent calc(12.5% - 1px),#EAEAEA calc(12.5% - 1px),#EAEAEA 12.5%);clip-path:none}
+.hero:after{content:"";position:absolute;left:46%;right:0;top:0;bottom:0;background:linear-gradient(90deg,transparent 0 12%,#E4002B 12% 13.2%,transparent 13.2% 100%);clip-path:none;opacity:1}
+.hero-top{align-items:flex-start;position:relative;z-index:1}
+.brand-copy{max-width:700px;border-left:8px solid #E4002B;padding-left:18px}
+.eyebrow{text-transform:uppercase;letter-spacing:.18em;font-size:10px;font-weight:700;color:#E4002B;margin-bottom:16px}
+h1{font-size:clamp(34px,5vw,72px);letter-spacing:-.065em;line-height:.98;margin:0;font-weight:700;max-width:640px}
+.hero p{color:#333;max-width:470px;margin:20px 0 0;font-size:15px}
+.hero-controls{gap:10px;padding-top:2px}
+.hero-badge{border-radius:0;min-height:30px;padding:5px 9px;background:#111;color:#fff;border:0;font-size:10px;letter-spacing:.04em}
+.hero-badge .status-dot{border-radius:0;background:#fff;box-shadow:none;width:6px;height:6px}
+.hero-auth-btn{border-radius:0;background:#fff;border:1px solid #111;color:#111;box-shadow:none}
+.hero-auth-btn:hover{background:#E4002B;color:#fff;border-color:#E4002B}
+.summary-panel{margin:0 0 22px;border:0;border-bottom:1px solid var(--ink);overflow:hidden}
+.panel{background:#fff;border:1px solid var(--ink);border-radius:0;box-shadow:none}
+.summary-panel .panel-head{padding:14px 0;border-bottom:0}
+.panel-head{padding:18px 20px 15px;border-bottom:1px solid var(--line)}
+.panel-title-row{align-items:flex-start}
+.panel h2{font-size:18px;letter-spacing:-.03em}
+.panel-sub{color:#666;font-size:12px;margin:4px 0 0}
+.btn{border-radius:0;padding:10px 13px;font-size:11px;font-weight:700;letter-spacing:.02em;transition:none}
+.btn-primary{background:#E4002B;color:#fff;box-shadow:none}
+.btn-primary:hover{background:#111}
+.btn-quiet{background:#F1F1F1;color:#111}
+.btn-quiet:hover{background:#D7D7D7}
+.btn-outline{background:#fff;color:#111;border:1px solid #111}
+.btn-outline:hover{background:#111;color:#fff}
+.btn-icon{width:32px;height:32px;border-radius:0;background:#fff;color:#111;border:1px solid #111}
+.btn-icon:hover{background:#E4002B;color:#fff;border-color:#E4002B}
+.layout{grid-template-columns:minmax(300px,360px) minmax(0,1fr);gap:22px;align-items:start}
+.form-panel{border-top:7px solid #E4002B}
+.form-body{padding:22px 20px 24px}
+.field{margin-bottom:18px}
+.field label{color:#111;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:7px}
+.field input,.field select{height:42px;border:1px solid #999;border-radius:0;background:#fff;color:#111;padding:0 10px}
+.field input:focus,.field select:focus{border-color:#E4002B;box-shadow:0 0 0 1px #E4002B;outline:0}
+.field input[readonly]{background:#F1F1F1;color:#555}
+.field-hint{color:#666;font-size:11px;margin:5px 0 0}
+.divider{border:0;border-top:1px solid #111;margin:22px 0 18px}
+.preview-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#111;margin-bottom:10px}
+.preview-grid{gap:0;border-top:1px solid #111;border-left:1px solid #111}
+.preview-item{padding:11px 10px;background:#fff;border:0;border-right:1px solid #111;border-bottom:1px solid #111;border-radius:0}
+.preview-item span{color:#666;font-size:10px;text-transform:uppercase;letter-spacing:.04em}
+.preview-item strong{color:#111;font-size:15px;margin-top:3px;font-variant-numeric:tabular-nums}
+.preview-item.total{background:#E4002B;border-color:#111}
+.preview-item.total span,.preview-item.total strong{color:#fff}
+.preview-item.total strong{font-size:27px;letter-spacing:-.04em}
+.form-actions{margin-top:20px}
+.main-panel-head{padding:18px 20px 16px;border-bottom:1px solid var(--line)}
+.toolbar{gap:8px}
+.toolbar .btn{padding-left:10px;padding-right:10px}
+.table-wrap{border-top:0}
+table{font-variant-numeric:tabular-nums}
+thead th{background:#111;color:#fff;font-size:10px;letter-spacing:.08em;padding:11px 12px;border:0}
+tbody td{padding:13px 12px;border-bottom:1px solid var(--line);color:#222}
+tbody tr:hover{background:#FFF0F2}
+.person-cell{color:#111}
+.pill{border-radius:0;background:#F1F1F1;color:#111;padding:4px 7px}
+.money-total{color:#E4002B}
+.empty{padding:64px 18px}
+.empty-icon{border-radius:0;background:#F1F1F1;color:#111}
+.list-foot{border-top:1px solid #111;color:#555;padding:12px 20px}
+.modal{border-radius:0;border:1px solid #111;box-shadow:8px 8px 0 #E4002B}
+.modal::backdrop{background:rgba(0,0,0,.55);backdrop-filter:none}
+.setup-card,.setup-subcard{border-radius:0;border:1px solid #111}
+.setup-subcard{background:#F7F7F8}
+.setup-form input,.editor-field input,.editor-field select,.role-incentive-row input,.setup-costs input{border-radius:0;border:1px solid #999}
+.toast{border-radius:0;background:#111;box-shadow:none}
+footer{color:#666;letter-spacing:.04em}
+@media(max-width:800px){.app-shell{padding:0 16px 28px}.hero{min-height:230px;padding-top:24px}.hero:before,.hero:after{left:62%}.hero-top{gap:18px}.brand-copy{padding-left:13px;border-left-width:6px}.hero p{font-size:14px}.layout{grid-template-columns:1fr;gap:16px}.panel-head,.main-panel-head,.form-body{padding-left:16px;padding-right:16px}.panel{border-radius:0}}
+@media(max-width:480px){.app-shell{padding:0 10px 24px}.hero:before,.hero:after{left:70%}.hero .brand{max-width:72%}h1{font-size:42px}.hero-controls{gap:5px}.hero-badge{font-size:9px;padding:5px 7px}}
+/* Industrial: black field, mono type, acid-lime signal. */
+:root{--ink:#F2F2F2;--muted:#9A9A9A;--line:#383838;--paper:#0B0C0A;--canvas:#000;--teal:#C6FF4A;--teal-light:#1A2410;--shadow:none;--radius:0}
+body{background:#000;color:#F2F2F2;font-family:"IBM Plex Mono","JetBrains Mono","Courier New",monospace;font-variant-numeric:tabular-nums}
+.app-shell{max-width:1500px;padding:0 28px 36px}.hero{background:#0B0C0A;color:#F2F2F2;border:1px solid #383838;border-top:5px solid #C6FF4A;border-radius:0;box-shadow:none;padding:30px 0 26px}.hero:before{left:58%;background:repeating-linear-gradient(90deg,transparent 0 79px,#242424 80px)}.hero:after{left:58%;background:linear-gradient(90deg,transparent 0 24%,#C6FF4A 24% 25%,transparent 25%)}
+.brand-copy{border-left:2px solid #C6FF4A;padding-left:16px}.eyebrow{color:#C6FF4A;font-size:10px;letter-spacing:.14em}.hero h1{font-size:clamp(30px,4.5vw,64px);letter-spacing:-.06em}.hero p{color:#B6B6B6;font-size:13px}.hero-badge{border:1px solid #C6FF4A;background:#0B0C0A;color:#C6FF4A;border-radius:0}.hero-badge .status-dot{background:#C6FF4A;border-radius:0;box-shadow:none}.hero-auth-btn{background:#0B0C0A;color:#F2F2F2;border:1px solid #555;border-radius:0}.hero-auth-btn:hover{background:#C6FF4A;color:#000;border-color:#C6FF4A}
+.panel{background:#0B0C0A;border:1px solid #383838;border-radius:0;box-shadow:none}.summary-panel{border:0;border-bottom:1px solid #383838}.panel-head,.main-panel-head{border-color:#383838}.panel h2{font-family:inherit;font-size:16px}.panel-sub,.field-hint{color:#9A9A9A}.form-panel{border-top:2px solid #C6FF4A}.field label{color:#F2F2F2}.field input,.field select,.participant-controls input,.participant-controls select{background:#000;color:#F2F2F2;border:1px solid #555;border-radius:0}.field input:focus,.field select:focus{border-color:#C6FF4A;box-shadow:0 0 0 1px #C6FF4A}.autocomplete-options,.export-menu{background:#0B0C0A;border:1px solid #555;border-radius:0;box-shadow:none}.autocomplete-option,.export-choice{background:#0B0C0A;color:#F2F2F2;border-radius:0}.autocomplete-option:hover,.autocomplete-option[aria-selected=true],.export-choice:hover{background:#1A2410;color:#C6FF4A}.preview-grid{border-color:#555}.preview-item{background:#0B0C0A;border-color:#555;border-radius:0}.preview-item span{color:#9A9A9A}.preview-item strong{color:#F2F2F2}.preview-item.total{background:#1A2410;border-color:#C6FF4A}.preview-item.total span,.preview-item.total strong{color:#C6FF4A}.btn{border-radius:0}.btn-primary{background:#C6FF4A;color:#000;box-shadow:none}.btn-primary:hover{background:#F2F2F2}.btn-quiet,.btn-outline,.btn-icon{background:#0B0C0A;color:#F2F2F2;border:1px solid #555;border-radius:0}.btn-quiet:hover,.btn-outline:hover,.btn-icon:hover{background:#C6FF4A;color:#000;border-color:#C6FF4A}.btn-danger{background:#FF3B30;color:#000;border-radius:0}.table-wrap{border-color:#383838}thead th{background:#000;color:#9A9A9A;border-bottom:1px solid #555;font-family:inherit}tbody td{color:#F2F2F2;border-color:#242424}tbody tr:hover{background:#111}.person-cell{color:#F2F2F2}.pill{background:#1A2410;color:#C6FF4A;border-radius:0}.money-total{color:#C6FF4A}.empty{color:#9A9A9A}.empty-icon{background:#1A2410;color:#C6FF4A;border-radius:0}.list-foot{border-color:#383838;color:#9A9A9A}.modal{background:#0B0C0A;color:#F2F2F2;border:1px solid #C6FF4A;border-radius:0;box-shadow:8px 8px 0 #C6FF4A}.modal p{color:#9A9A9A}.setup-card,.setup-subcard{border-color:#555;border-radius:0}.setup-subcard{background:#111}.toast{background:#C6FF4A;color:#000;border-radius:0;box-shadow:none}footer{color:#777}
 </style>
 </head>
 <body>
@@ -194,9 +285,9 @@ footer{color:#8b98a8;font-size:11px;text-align:center;padding:20px 0 0}
     <div class="hero-top">
       <div class="brand">
         <div class="brand-copy">
-          <div class="eyebrow">Departemen &middot; Teknologi Informasi</div>
+          <div class="eyebrow">Teknologi Informasi &middot; Administrasi perjalanan</div>
           <h1>Rekap Perjalanan Dinas</h1>
-          <p>Pencatatan perjalanan dinas & hitung komponen biaya otomatis.</p>
+          <p>Catat perjalanan, periksa komponen biaya, dan siapkan rekap untuk pelaporan.</p>
         </div>
       </div>
       <div class="hero-controls">
@@ -216,7 +307,7 @@ footer{color:#8b98a8;font-size:11px;text-align:center;padding:20px 0 0}
       <div class="panel-title-row">
         <div>
           <h2>Ringkasan</h2>
-          <p class="panel-sub">Total PKB diurutkan dari yang tertinggi.</p>
+          <p class="panel-sub">Total biaya diurutkan dari yang tertinggi.</p>
         </div>
         <button class="btn btn-icon" id="summaryToggle" type="button" aria-label="Tampilkan ringkasan" aria-expanded="false" title="Tampilkan ringkasan">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
@@ -276,7 +367,7 @@ footer{color:#8b98a8;font-size:11px;text-align:center;padding:20px 0 0}
         <div class="form-actions">
           <button class="btn btn-primary" type="submit">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-            ADD DATA
+            Tambah perjalanan
           </button>
           <button class="btn btn-quiet" id="resetBtn" type="button">Reset</button>
         </div>
