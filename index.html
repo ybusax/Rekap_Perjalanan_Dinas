@@ -19,7 +19,7 @@ button{cursor:pointer}
 button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid rgba(15,148,136,.3);outline-offset:2px}
 .app-shell{max-width:1440px;margin:0 auto;padding:24px clamp(14px,3vw,36px) 40px}
 .hero{background:#fff;border:1px solid #e4eaf0;border-radius:20px;padding:22px 28px;min-height:130px;color:var(--ink);position:relative;overflow:hidden;box-shadow:var(--shadow)}
-.hero:before{content:"";position:absolute;inse                            t:0 0 0 43%;background:linear-gradient(116deg,transparent 0 18%,rgba(216,255,225,.62) 18.3% 31%,transparent 31.3% 100%),linear-gradient(116deg,transparent 0 40%,rgba(76,175,105,.56) 40.3% 55%,transparent 55.3% 100%),linear-gradient(116deg,transparent 0 65%,rgba(19,94,51,.38) 65.3% 80%,transparent 80.3% 100%),linear-gradient(112deg,#b7e4c7 0%,#74c69d 28%,#2d9b62 58%,#14532d 100%);clip-path:polygon(17% 0,100% 0,100% 100%,0 100%)}
+.hero:before{content:"";position:absolute;inset:0 0 0 43%;background:linear-gradient(116deg,transparent 0 18%,rgba(216,255,225,.62) 18.3% 31%,transparent 31.3% 100%),linear-gradient(116deg,transparent 0 40%,rgba(76,175,105,.56) 40.3% 55%,transparent 55.3% 100%),linear-gradient(116deg,transparent 0 65%,rgba(19,94,51,.38) 65.3% 80%,transparent 80.3% 100%),linear-gradient(112deg,#b7e4c7 0%,#74c69d 28%,#2d9b62 58%,#14532d 100%);clip-path:polygon(17% 0,100% 0,100% 100%,0 100%)}
 .hero:after{content:"";position:absolute;inset:0 0 0 43%;clip-path:polygon(17% 0,100% 0,100% 100%,0 100%);background:repeating-linear-gradient(119deg,transparent 0 48px,rgba(255,255,255,.18) 49px 51px,transparent 52px 91px);pointer-events:none}
 .hero-top{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;position:relative;z-index:1}
 .brand{display:flex;align-items:center;gap:0;min-width:0}
@@ -78,7 +78,7 @@ h1{font-size:clamp(23px,3vw,32px);letter-spacing:-.035em;line-height:1.15;margin
 .participant-entry{padding:10px;border:1px solid #e5ebf1;border-radius:10px;background:#f9fbfc}
 .participant-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}
 .participant-identity{min-width:0}.participant-identity strong{display:block;overflow:hidden;text-overflow:ellipsis;font-size:11px;color:#20374b}.participant-identity small{font-size:10px;color:#738398}
-.participant-remove{border:0;background:transparent;color:#8492a2;font-size:18px;line-height:1;padding:3px 6px;border-radius:6px}.participant-remove:hover{background:#fff1f2;color:#be123c}
+.participant-remove{min-width:44px;min-height:44px;border:0;background:transparent;color:#8492a2;font-size:18px;line-height:1;padding:3px 6px;border-radius:6px}.participant-remove:hover{background:#fff1f2;color:#be123c}
 .participant-controls{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .participant-controls label{display:grid;gap:4px;font-size:10px;font-weight:700;color:#52657a}
 .participant-controls select,.participant-controls input{width:100%;height:36px;min-width:0;padding:0 8px;border:1px solid #d9e2ec;border-radius:8px;background:#fff;color:#142b40;font:inherit;font-size:11px}
@@ -114,7 +114,7 @@ h1{font-size:clamp(23px,3vw,32px);letter-spacing:-.035em;line-height:1.15;margin
 .export-menu[hidden]{display:none!important}
 .export-choice{border:0;background:transparent;color:#30485e;text-align:left;padding:9px 10px;border-radius:7px;font-size:12px;font-weight:700}
 .export-choice:hover,.export-choice:focus-visible{background:#edf4ff;outline:0}
-.btn-icon{width:34px;height:34px;padding:0;background:#f1f5f9;color:#52657a;border-radius:9px}
+.btn-icon{width:44px;height:44px;padding:0;background:#f1f5f9;color:#52657a;border-radius:9px}
 .btn-icon svg{width:17px;height:17px}
 .table-wrap{overflow:auto;border-top:1px solid #edf1f5;flex:1;min-height:0}
 table{width:100%;border-collapse:separate;border-spacing:0;white-space:nowrap;font-size:12px}
@@ -129,14 +129,14 @@ tbody tr{transition:background-color .16s ease}
 #tripRows tr.recently-added,#tripRows tr.recently-added:hover{background:#dff3eb}
 #tripRows tr.recently-added{background:#dff3eb;animation:recent-row 3.2s ease-out}
 @keyframes recent-row{0%{background:#b9ead8}100%{background:#dff3eb}}
-@media(prefers-reduced-motion:reduce){tbody tr{transition:none}#tripRows tr.recently-added{animation:none}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}tbody tr{transition:none}#tripRows tr.recently-added{animation:none}}
 tbody tr:last-child td{border-bottom:0}
 .person-cell{font-weight:750;color:#182f44;max-width:205px;overflow:hidden;text-overflow:ellipsis}
 .mini-muted{font-size:10px;color:#8190a0;margin-top:3px}
 .pill{display:inline-flex;align-items:center;padding:5px 8px;border-radius:7px;background:#f0f4f8;color:#52677a;font-weight:750;font-size:10px}
 .money{font-variant-numeric:tabular-nums;font-weight:700}
 .money-total{color:#08776b;font-weight:850}
-.delete-btn{width:30px;height:30px;display:grid;place-items:center;background:transparent;border:1px solid transparent;border-radius:8px;color:#92a0af}
+.delete-btn{width:44px;height:44px;display:grid;place-items:center;background:transparent;border:1px solid transparent;border-radius:8px;color:#92a0af}
 .delete-btn:hover{background:#fff1f2;border-color:#ffe4e6;color:#be123c}
 .delete-btn svg{width:15px;height:15px}
 .row-actions{display:flex;justify-content:center;gap:4px}
