@@ -18,7 +18,7 @@ button,input,select{font:inherit}
 button{cursor:pointer}
 button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid rgba(15,148,136,.3);outline-offset:2px}
 .app-shell{max-width:1440px;margin:0 auto;padding:24px clamp(14px,3vw,36px) 40px}
-.hero{background:#fff;border:1px solid #e4eaf0;border-radius:20px;padding:25px 30px;min-height:150px;color:var(--ink);position:relative;overflow:hidden;box-shadow:var(--shadow)}
+.hero{background:#fff;border:1px solid #e4eaf0;border-radius:20px;padding:22px 28px;min-height:130px;color:var(--ink);position:relative;overflow:hidden;box-shadow:var(--shadow)}
 .hero:before{content:"";position:absolute;inse                            t:0 0 0 43%;background:linear-gradient(116deg,transparent 0 18%,rgba(216,255,225,.62) 18.3% 31%,transparent 31.3% 100%),linear-gradient(116deg,transparent 0 40%,rgba(76,175,105,.56) 40.3% 55%,transparent 55.3% 100%),linear-gradient(116deg,transparent 0 65%,rgba(19,94,51,.38) 65.3% 80%,transparent 80.3% 100%),linear-gradient(112deg,#b7e4c7 0%,#74c69d 28%,#2d9b62 58%,#14532d 100%);clip-path:polygon(17% 0,100% 0,100% 100%,0 100%)}
 .hero:after{content:"";position:absolute;inset:0 0 0 43%;clip-path:polygon(17% 0,100% 0,100% 100%,0 100%);background:repeating-linear-gradient(119deg,transparent 0 48px,rgba(255,255,255,.18) 49px 51px,transparent 52px 91px);pointer-events:none}
 .hero-top{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;position:relative;z-index:1}
@@ -28,8 +28,8 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 h1{font-size:clamp(23px,3vw,32px);letter-spacing:-.035em;line-height:1.15;margin:0;font-weight:760}
 .hero p{color:#617287;max-width:670px;margin:12px 0 0;position:relative;z-index:1}
 .hero-controls{display:flex;align-items:center;gap:7px;position:relative;z-index:2;flex-shrink:0}
-.hero-badge{display:flex;align-items:center;gap:7px;min-height:32px;padding:6px 10px;border-radius:999px;background:rgba(12,65,35,.35);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:11px;font-weight:700;white-space:nowrap}
-.hero-badge .status-dot{width:7px;height:7px;flex:0 0 7px;border-radius:50%;background:#c8f2d1;box-shadow:0 0 0 4px rgba(200,242,209,.18)}
+.hero-badge{display:flex;align-items:center;gap:6px;min-height:32px;color:#fff;font-size:11px;font-weight:750;white-space:nowrap}
+.hero-badge svg{width:14px;height:14px;flex:0 0 14px}
 .hero-auth-btn{width:32px;height:32px;padding:0;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.42);color:#fff;border-radius:9px;box-shadow:none}
 .hero-auth-btn:hover{background:rgba(255,255,255,.3)}
 .hero-auth-btn svg{width:16px;height:16px}
@@ -59,8 +59,14 @@ h1{font-size:clamp(23px,3vw,32px);letter-spacing:-.035em;line-height:1.15;margin
 .required{color:#d94645}
 .field input,.field select{width:100%;height:43px;border:1px solid #d9e2ec;border-radius:10px;background:#fff;color:#142b40;padding:0 12px;outline:none;transition:border .15s,box-shadow .15s;min-width:0}
 .field input:focus,.field select:focus{border-color:#0f9488;box-shadow:0 0 0 3px rgba(15,148,136,.12)}
+.field.field-valid input{border-color:#8bcfc4;background:#fbfffe}
+.field.field-error input{border-color:#e5a09b;background:#fffafa}
 .field input[readonly]{background:#f6f8fb;color:#52657a}
 .field input::placeholder{color:#a0adba}
+.floating-field{position:relative}
+.field .floating-field>label{position:absolute;top:0;left:9px;z-index:1;height:43px;margin:0;padding:0 4px;display:flex;align-items:center;background:#fff;color:#718096;font-size:12px;font-weight:650;pointer-events:none;transition:transform .15s,color .15s,font-size .15s}
+.field .floating-field:focus-within>label,.field .floating-field:has(input:not(:placeholder-shown))>label{height:auto;top:0;transform:translateY(-50%);color:#0f766e;font-size:10px}
+.field .floating-field input{padding-top:4px}
 .autocomplete-wrap{position:relative}
 .autocomplete-options{position:absolute;top:calc(100% + 5px);left:0;right:0;z-index:30;max-height:230px;overflow:auto;padding:5px;background:#fff;border:1px solid #dbe4ec;border-radius:10px;box-shadow:0 12px 26px rgba(15,35,55,.15)}
 .autocomplete-options[hidden]{display:none!important}
@@ -92,6 +98,7 @@ h1{font-size:clamp(23px,3vw,32px);letter-spacing:-.035em;line-height:1.15;margin
 .preview-item.total strong{color:#086b61;font-size:21px}
 .form-actions{display:flex;gap:9px;margin-top:18px}
 .btn{border:0;border-radius:10px;padding:11px 14px;font-size:12px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:transform .12s,background .12s;white-space:nowrap}
+.btn:disabled{opacity:.62;cursor:wait}
 .btn:active{transform:translateY(1px)}
 .btn-primary{flex:1;background:var(--teal);color:white;box-shadow:0 5px 13px rgba(15,118,110,.18)}
 .btn-primary:hover{background:#0b645d}
@@ -115,6 +122,14 @@ thead th{background:#f8fafc;color:#67788a;text-align:left;font-size:10px;text-tr
 #tableWrap thead th{position:sticky;top:0;z-index:2}
 tbody td{padding:14px;border-bottom:1px solid #eff3f6;color:#344a5f;vertical-align:middle}
 tbody tr:hover{background:#fbfdff}
+tbody tr{transition:background-color .16s ease}
+#summaryRows tr:hover,#tripRows tr:hover{background:#e6f1f0}
+#summaryRows tr:nth-child(even),#tripRows tr:nth-child(even){background:#fbfcfd}
+#summaryRows tr:nth-child(even):hover,#tripRows tr:nth-child(even):hover{background:#e6f1f0}
+#tripRows tr.recently-added,#tripRows tr.recently-added:hover{background:#dff3eb}
+#tripRows tr.recently-added{background:#dff3eb;animation:recent-row 3.2s ease-out}
+@keyframes recent-row{0%{background:#b9ead8}100%{background:#dff3eb}}
+@media(prefers-reduced-motion:reduce){tbody tr{transition:none}#tripRows tr.recently-added{animation:none}}
 tbody tr:last-child td{border-bottom:0}
 .person-cell{font-weight:750;color:#182f44;max-width:205px;overflow:hidden;text-overflow:ellipsis}
 .mini-muted{font-size:10px;color:#8190a0;margin-top:3px}
@@ -159,6 +174,24 @@ tbody tr:last-child td{border-bottom:0}
 .empty strong{display:block;color:#3b5065;font-size:13px}
 .empty p{font-size:12px;max-width:260px;margin:6px auto 0;line-height:1.6}
 .list-foot{display:flex;justify-content:space-between;align-items:center;gap:15px;padding:13px 22px;border-top:1px solid #edf1f5;color:#8290a0;font-size:11px}
+.step-indicator{display:flex;gap:0;list-style:none;padding:0;margin:13px 0 0;color:#91a0af;font-size:10px;font-weight:750}
+.step-indicator li{display:flex;align-items:center;gap:6px}
+.step-indicator li:not(:last-child)::after{content:"";width:24px;height:1px;background:#dce5ec;margin:0 7px}
+.step-indicator li::before{content:attr(data-step);width:18px;height:18px;display:grid;place-items:center;border:1px solid #d9e2ec;border-radius:50%;font-size:9px}
+.step-indicator li.active{color:#0f766e}
+.step-indicator li.active::before{background:#e7f7f3;border-color:#94d8cd;color:#0f766e}
+.toolbar{display:grid;grid-template-columns:minmax(160px,1fr) repeat(6,max-content);align-items:center;gap:8px;min-width:0}
+.table-filter{position:relative;display:flex;align-items:center;gap:7px;width:auto;min-width:0;height:44px;padding:0 10px;border:1px solid #dbe4ec;border-radius:9px;background:#fff;color:#8290a0}
+.table-filter:focus-within{border-color:#0f9488;box-shadow:0 0 0 3px rgba(15,148,136,.1)}
+.table-filter svg{width:15px;height:15px;flex:0 0 15px}
+.table-filter input{width:100%;height:100%;border:0;outline:0;background:transparent;color:var(--ink);font-size:12px;padding:7px 0 0}
+.table-filter input::placeholder{color:transparent}
+.floating-filter-label{position:absolute;left:32px;top:50%;padding:0 3px;background:#fff;color:#718096;font-size:12px;font-weight:650;pointer-events:none;transform:translateY(-50%);transition:transform .15s,color .15s,font-size .15s}
+.table-filter:focus-within .floating-filter-label,.table-filter:has(input:not(:placeholder-shown)) .floating-filter-label{top:0;transform:translateY(-50%);color:#0f766e;font-size:10px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.filter-empty{padding:36px 18px;text-align:center;color:#76869a}
+.filter-empty strong{display:block;color:#3b5065;font-size:13px}
+.filter-empty p{font-size:12px;margin:6px auto 0}
 .toast{position:fixed;right:20px;bottom:20px;z-index:20;background:#122f44;color:white;padding:12px 16px;border-radius:12px;box-shadow:0 12px 32px rgba(14,35,55,.2);font-size:12px;font-weight:700;opacity:0;transform:translateY(8px);pointer-events:none;transition:.22s;max-width:min(88vw,420px)}
 .toast.show{opacity:1;transform:translateY(0)}
 .modal{width:min(92vw,420px);border:1px solid #e2e8f0;border-radius:16px;padding:22px;color:var(--ink);box-shadow:0 24px 70px rgba(15,35,55,.25)}
@@ -179,7 +212,7 @@ tbody tr:last-child td{border-bottom:0}
 .field-error.show{display:block}
 footer{color:#8b98a8;font-size:11px;text-align:center;padding:20px 0 0}
 @media(max-width:1050px){.layout{grid-template-columns:minmax(280px,360px) minmax(0,1fr)}.main-panel-head{flex-direction:column}.toolbar{justify-content:flex-start}}
-@media(max-width:800px){.app-shell{padding:14px 12px 28px}.hero{padding:23px 20px;border-radius:20px}.hero:before,.hero:after{left:64%}.hero-top{align-items:flex-start;gap:10px}.hero-controls{gap:5px}.hero-badge{display:flex;min-height:30px;padding:5px 8px;font-size:10px}.hero-auth-btn{width:30px;height:30px}.hero p{max-width:100%}.hero .brand{max-width:62%}.summary-panel{margin:12px 0 15px}.layout{grid-template-columns:1fr;gap:15px}.layout>.panel{height:auto}.list-panel{max-height:min(var(--form-panel-height,75vh),75vh)}.panel-head,.main-panel-head{padding:18px}.form-body{padding:18px}.panel{border-radius:16px}.main-panel-head{align-items:stretch}.toolbar{justify-content:flex-start}}
+@media(max-width:800px){.app-shell{padding:14px 12px 28px}.hero{padding:20px 18px;border-radius:18px}.hero:before,.hero:after{left:64%}.hero-top{align-items:flex-start;gap:10px}.hero-controls{gap:5px}.hero-badge{display:flex;min-height:30px;padding:5px 8px;font-size:10px}.hero-auth-btn{width:30px;height:30px}.hero p{max-width:100%;margin-top:8px}.hero .brand{max-width:62%}.summary-panel{margin:12px 0 15px}.layout{grid-template-columns:1fr;gap:15px}.layout>.panel{height:auto}.list-panel{max-height:min(var(--form-panel-height,75vh),75vh)}.panel-head,.main-panel-head{padding:18px}.form-body{padding:18px}.panel{border-radius:16px}.main-panel-head{align-items:stretch}.toolbar{display:flex;justify-content:flex-start;flex-wrap:wrap}.table-filter{order:-1;width:100%;flex:1 0 100%}.step-indicator li:not(:last-child)::after{width:14px;margin:0 4px}}
 @media(max-width:480px){.hero:before,.hero:after{left:72%;opacity:.72}.hero .brand{max-width:68%}}
 @media(max-width:420px){.two-col{grid-template-columns:1fr;gap:0}.form-actions .btn{padding:11px 9px}.toolbar .btn{flex:1}.toolbar .btn-icon{flex:0 0 34px}}
 @media(max-width:680px){.setup-grid{grid-template-columns:1fr}.setup-card-wide{grid-column:auto}.setup-cost-layout{grid-template-columns:1fr}.setup-costs{grid-template-columns:1fr 1fr}}
@@ -202,7 +235,7 @@ footer{color:#8b98a8;font-size:11px;text-align:center;padding:20px 0 0}
         </div>
       </div>
       <div class="hero-controls">
-        <div class="hero-badge" aria-live="polite"><span class="status-dot" aria-hidden="true"></span><span id="cloudStatus">Publik</span></div>
+        <div class="hero-badge" id="cloudStatusBadge" aria-live="polite" aria-label="Status akses public"><svg id="cloudStatusIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span id="cloudStatus">public</span></div>
         <button class="btn btn-icon hero-auth-btn" id="adminLoginBtn" type="button" aria-label="Masuk admin" title="Masuk admin">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a6 6 0 0 1 6-6c2 0 3.8.9 4.9 2.3M19 8v6m3-3h-6"/></svg>
         </button>
@@ -240,28 +273,39 @@ footer{color:#8b98a8;font-size:11px;text-align:center;padding:20px 0 0}
         <div class="panel-title-row">
           <h2>Input perjalanan dinas</h2>
         </div>
+        <ol class="step-indicator" aria-label="Tahapan input perjalanan">
+          <li class="active" data-step="1">Tanggal</li>
+          <li data-step="2">Nama</li>
+          <li data-step="3">Kantor</li>
+        </ol>
       </div>
       <form id="tripForm" class="form-body" autocomplete="off">
         <div class="field">
-          <label for="tanggal">Tanggal perjalanan <span class="required">*</span></label>
-          <input id="tanggal" name="tanggal" type="text" inputmode="numeric" placeholder="DD/MM/YYYY" maxlength="10" pattern="(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/[0-9]{4}" title="Masukkan tanggal dengan format DD/MM/YYYY" required>
+          <div class="floating-field">
+            <label for="tanggal">Tanggal perjalanan</label>
+            <input id="tanggal" name="tanggal" type="text" inputmode="numeric" placeholder=" " maxlength="10" pattern="(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/[0-9]{4}" title="Masukkan tanggal dengan format DD/MM/YYYY" aria-describedby="tanggalPreview" required>
+          </div>
           <div class="field-hint" id="tanggalPreview">Format: Hari, DD/MM/YYYY</div>
         </div>
         <div class="field">
-          <label for="nama">Nama <span class="required">*</span></label>
-          <div class="autocomplete-wrap">
-            <input id="nama" name="nama" type="text" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="namaSuggestions" placeholder="Ketik lalu pilih nama pegawai...">
+          <div class="floating-field">
+            <label for="nama">Nama</label>
+            <div class="autocomplete-wrap">
+            <input id="nama" name="nama" type="text" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="namaSuggestions" aria-describedby="namaHint namaError" placeholder=" ">
             <div class="autocomplete-options" id="namaSuggestions" role="listbox" hidden></div>
+            </div>
           </div>
           <div class="participant-list" id="participantList" aria-live="polite"></div>
-          <div class="field-hint">Pilih beberapa nama bila berangkat pada tanggal dan kantor yang sama.</div>
+          <div class="field-hint" id="namaHint">Pilih beberapa nama bila berangkat pada tanggal dan kantor yang sama.</div>
           <div class="field-error" id="namaError">Pilih nama yang terdaftar pada daftar pegawai.</div>
         </div>
         <div class="field">
-          <label for="kantor">Kantor tujuan <span class="required">*</span></label>
-          <div class="autocomplete-wrap">
-            <input id="kantor" name="kantor" type="text" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="kantorSuggestions" placeholder="Mulai ketik nama kantor..." required>
+          <div class="floating-field">
+            <label for="kantor">Kantor tujuan</label>
+            <div class="autocomplete-wrap">
+            <input id="kantor" name="kantor" type="text" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="kantorSuggestions" aria-describedby="jarakLabel kantorError" placeholder=" " required>
             <div class="autocomplete-options" id="kantorSuggestions" role="listbox" hidden></div>
+            </div>
           </div>
           <div class="field-hint" id="jarakLabel">Jarak kantor otomatis</div>
           <div class="field-error" id="kantorError">Pilih kantor yang tersedia di daftar Kantor & Jarak.</div>
@@ -276,9 +320,9 @@ footer{color:#8b98a8;font-size:11px;text-align:center;padding:20px 0 0}
           <div class="preview-item total"><span>Total</span><strong id="prevTotal">Rp 30.000</strong></div>
         </div>
         <div class="form-actions">
-          <button class="btn btn-primary" type="submit">
+          <button class="btn btn-primary" id="addTripBtn" type="submit">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-            Tambah perjalanan
+            <span id="addTripLabel">Tambah perjalanan</span>
           </button>
           <button class="btn btn-quiet" id="resetBtn" type="button">Reset</button>
         </div>
@@ -293,6 +337,7 @@ footer{color:#8b98a8;font-size:11px;text-align:center;padding:20px 0 0}
           </div>
         </div>
         <div class="toolbar">
+          <label class="table-filter"><span class="floating-filter-label">Cari perjalanan</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="tripFilter" type="search" placeholder=" " aria-label="Cari perjalanan berdasarkan nama, kantor, atau tanggal" autocomplete="off"></label>
           <button class="btn btn-icon admin-only" id="inputPanelToggle" type="button" aria-label="Sembunyikan panel input" aria-expanded="true" title="Sembunyikan panel input">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16m6-11-3 3 3 3"/></svg>
           </button>
@@ -320,9 +365,10 @@ footer{color:#8b98a8;font-size:11px;text-align:center;padding:20px 0 0}
       <input id="importFile" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden>
       <div id="emptyState" class="empty">
         <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg></div>
-        <strong>Belum ada data</strong>
+        <strong id="emptyTitle">Belum ada data</strong>
+        <p id="emptyMessage">Belum ada perjalanan yang ditambahkan.</p>
       </div>
-      <div class="table-wrap" id="tableWrap" hidden>
+      <div class="table-wrap" id="tableWrap" tabindex="0" role="region" aria-label="Daftar perjalanan" hidden>
         <table>
           <thead>
             <tr>
@@ -445,6 +491,9 @@ function getAdminUids(){
 }
 let trips = [];
 let participants = [];
+let recentTripIds = new Set();
+let recentTripsTimer = null;
+let isSavingTrip = false;
 const autocompleteControllers = {};
 let cloudDb = null;
 let cloudAuth = null;
@@ -512,7 +561,16 @@ function saveTrips(){
   return tripWriteQueue;
 }
 function stableTripJSON(item){ return JSON.stringify(Object.keys(item).sort().map(key=>[key,item[key]])); }
-function setCloudStatus(text){ if($("cloudStatus")) $("cloudStatus").textContent = text; }
+function setCloudStatus(text){
+  const status = text === "Admin" ? "admin" : "public";
+  const badge = $("cloudStatusBadge");
+  const icon = $("cloudStatusIcon");
+  if($("cloudStatus")) $("cloudStatus").textContent = status;
+  if(badge) badge.setAttribute("aria-label",`Status akses ${status}`);
+  if(icon) icon.innerHTML = status === "admin"
+    ? '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0"/>'
+    : '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>';
+}
 function applyAccess(){
   document.body.classList.toggle("public-mode",!isAdmin);
   document.body.classList.toggle("cloud-loading",!cloudReady || !cloudSettingsLoaded || !cloudTripsLoaded);
@@ -575,6 +633,24 @@ function money(value){ return rupiah.format(Number(value || 0)).replace(/\u00a0/
 function escapeHtml(value){
   return String(value ?? "").replace(/[&<>"']/g, ch => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[ch]));
 }
+function setFieldState(inputId,state){
+  const field=$(inputId)?.closest(".field");
+  if(!field) return;
+  field.classList.toggle("field-valid",state === "valid");
+  field.classList.toggle("field-error",state === "error");
+}
+function setInputStep(step){
+  document.querySelectorAll(".step-indicator li").forEach(item=>item.classList.toggle("active",item.dataset.step === String(step)));
+}
+function setTripSaving(saving){
+  isSavingTrip = saving;
+  const button=$("addTripBtn");
+  const label=$("addTripLabel");
+  if(!button || !label) return;
+  button.disabled = saving;
+  label.textContent = saving ? "Menyimpan..." : "Tambah perjalanan";
+  button.setAttribute("aria-busy",String(saving));
+}
 function localISODate(date = new Date()){
   const local = new Date(date.getTime() - date.getTimezoneOffset()*60000);
   return local.toISOString().slice(0,10);
@@ -586,6 +662,21 @@ function dateInputToISO(value){
   const date = new Date(Number(year),Number(month)-1,Number(day),12);
   if(date.getFullYear() !== Number(year) || date.getMonth() !== Number(month)-1 || date.getDate() !== Number(day)) return "";
   return `${year}-${month}-${day}`;
+}
+function normalizeDateInput(){
+  const input = $("tanggal");
+  const raw = input.value.trim();
+  const digits = raw.replace(/\D/g,"");
+  if(/^\d{2}$/.test(digits)){
+    const [year,month] = localISODate().split("-");
+    const day = Number(digits);
+    const candidate = `${digits}/${month}/${year}`;
+    if(day >= 1 && day <= new Date(Number(year),Number(month),0).getDate()) input.value = candidate;
+  }else if(/^\d{8}$/.test(digits)){
+    input.value = `${digits.slice(0,2)}/${digits.slice(2,4)}/${digits.slice(4)}`;
+  }
+  input.setCustomValidity("");
+  updateDatePreview();
 }
 function isoToDateInput(iso){
   const match = String(iso || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
@@ -609,11 +700,13 @@ function updateOffice(){
   const office = currentOffice();
   $("jarakLabel").textContent = office ? `${office.distance} km` : "Jarak kantor otomatis";
   $("kantorError").classList.remove("show");
+  setFieldState("kantor",office ? "valid" : "idle");
   calculatePreview();
 }
 function updateDatePreview(){
   const isoDate = dateInputToISO($("tanggal").value);
   $("tanggalPreview").textContent = isoDate ? formatDate(isoDate) : "Format: Hari, DD/MM/YYYY";
+  setFieldState("tanggal",isoDate ? "valid" : "idle");
   calculatePreview();
 }
 function previousISODate(isoDate){
@@ -687,6 +780,7 @@ function addParticipant(employee){
   if(participants.some(person=>norm(person.name)===norm(employee.name))){ notify("Nama tersebut sudah ditambahkan."); return; }
   participants.push({name:employee.name,role:employee.role,vehicle:employee.role==="Petugas Sopir"?"":"Kantor",time:""});
   $("namaError").classList.remove("show");
+  setFieldState("nama","valid");
   renderParticipants();
 }
 function calculatePreview(){
@@ -742,7 +836,11 @@ function bindAutocomplete(inputId,panelId,getOptions,onSelect){
   };
   input.addEventListener("input",()=>{
     refresh();
-    if(inputId === "nama") $("namaError").classList.remove("show");
+    if(inputId === "nama"){
+      $("namaError").classList.remove("show");
+      setFieldState("nama",participants.length ? "valid" : "idle");
+      setInputStep(2);
+    }
     if(inputId === "kantor") updateOffice();
   });
   input.addEventListener("focus",()=>{ if(input.value.trim()) refresh(); });
@@ -759,7 +857,17 @@ function bindAutocomplete(inputId,panelId,getOptions,onSelect){
       return;
     }
     if(event.key === "Enter" && !panel.hidden && options.length){
-      event.preventDefault(); choose(options[activeIndex>=0?activeIndex:0]); return;
+      event.preventDefault();
+      choose(options[activeIndex>=0?activeIndex:0]);
+      if(inputId === "nama") $("kantor").focus();
+      else if(inputId === "kantor") $("tripForm").requestSubmit();
+      return;
+    }
+    if(event.key === "Enter"){
+      event.preventDefault();
+      if(inputId === "nama") $("kantor").focus();
+      else if(inputId === "kantor") $("tripForm").requestSubmit();
+      return;
     }
     if(event.key === "Tab" && !panel.hidden && options.length) choose(options[activeIndex>=0?activeIndex:0]);
   });
@@ -836,16 +944,28 @@ function deleteMasterRecord(type,index){
   target.splice(index,1); refreshMasterData(); notify("Data Setup dihapus.");
 }
 function validateForm(){
-  let valid = true;
+  $("namaError").classList.remove("show");
+  $("kantorError").classList.remove("show");
   const office = currentOffice();
   if(!participants.length || $("nama").value.trim()){
-    $("namaError").classList.add("show"); valid = false;
+    $("namaError").classList.add("show");
+    setFieldState("nama","error");
+    setInputStep(2);
+    $("nama").focus();
+    return false;
   }
   if(!office){
-    $("kantorError").classList.add("show"); valid = false;
+    $("kantorError").classList.add("show");
+    setFieldState("kantor","error");
+    setInputStep(3);
+    $("kantor").focus();
+    return false;
   }
+  setFieldState("nama","valid");
+  setFieldState("kantor","valid");
+  let valid = true;
   const tripDate = dateInputToISO($("tanggal").value);
-  if(!tripDate){ $("tanggal").setCustomValidity("Masukkan tanggal yang valid dengan format DD/MM/YYYY."); $("tanggal").reportValidity(); valid = false; }
+  if(!tripDate){ $("tanggal").setCustomValidity("Masukkan tanggal yang valid dengan format DD/MM/YYYY."); setFieldState("tanggal","error"); setInputStep(1); $("tanggal").focus(); $("tanggal").reportValidity(); valid = false; }
   if(!valid) return false;
   if(participants.some(person=>trips.some(item=>item.date===tripDate && norm(item.name)===norm(person.name)))){
     $("duplicateTripModal").showModal(); return false;
@@ -865,6 +985,7 @@ function validateForm(){
 }
 function addTrip(event){
   event.preventDefault();
+  if(isSavingTrip) return;
   if(!isAdmin){ notify("Masuk sebagai admin untuk menambah data."); return; }
   if(!validateForm()) return;
   const office=currentOffice();
@@ -877,7 +998,15 @@ function addTrip(event){
     return {id:`${timestamp}-${Math.random().toString(36).slice(2,8)}`,createdAt:timestamp,date:tripDate,name:person.name,role:person.role,office:office.name,distance:costs.distance,vehicle,incentive:costs.incentive,incentiveDisplay:money(costs.incentive),meal:costs.meal,fuel:costs.fuel,rental:costs.rental,total:costs.total};
   });
   trips.unshift(...rows);
-  void saveTrips();
+  recentTripIds = new Set(rows.map(row=>String(row.id)));
+  clearTimeout(recentTripsTimer);
+  recentTripsTimer = setTimeout(()=>{
+    recentTripIds = new Set();
+    renderTrips();
+  },4200);
+  setTripSaving(true);
+  const savePromise = saveTrips();
+  savePromise.finally(()=>setTripSaving(false));
   renderTrips();
   resetForm();
   notify(`${rows.length} perjalanan berhasil ditambahkan.`);
@@ -900,10 +1029,8 @@ function summarizeTrips(){
 function renderTrips(){
   const body = $("tripRows");
   const summaryBody = $("summaryRows");
+  const query = norm($("tripFilter")?.value || "");
   const empty = trips.length === 0;
-  $("emptyState").hidden = !empty;
-  $("tableWrap").hidden = empty;
-  $("listFoot").hidden = empty;
   const total = trips.reduce((sum,item)=>sum + Number(item.total || 0),0);
   const summaries = summarizeTrips();
   $("summaryEmpty").hidden = summaries.length > 0;
@@ -920,9 +1047,17 @@ function renderTrips(){
   $("footCount").textContent = `${trips.length} perjalanan tercatat`;
   $("footSum").textContent = `Total: ${money(total)}`;
   const tripsByDate = [...trips].sort(compareTripsByDateAndEntry);
+  const visibleTrips = query ? tripsByDate.filter(item=>norm(`${item.name} ${item.role} ${item.office} ${formatDate(item.date)} ${item.date}`).includes(query)) : tripsByDate;
+  const noResults = trips.length > 0 && visibleTrips.length === 0;
+  $("emptyState").hidden = !empty && !noResults;
+  $("tableWrap").hidden = empty || noResults;
+  $("listFoot").hidden = empty || noResults;
+  $("emptyTitle").textContent = noResults ? "Tidak ada hasil" : "Belum ada data";
+  $("emptyMessage").textContent = noResults ? "Coba kata kunci lain atau hapus filter." : "Belum ada perjalanan yang ditambahkan.";
+  $("footCount").textContent = query ? `${visibleTrips.length} dari ${trips.length} perjalanan` : `${trips.length} perjalanan tercatat`;
   const actionsExpanded = $("tripActionsToggle").getAttribute("aria-expanded") === "true";
-  body.innerHTML = tripsByDate.map(item => `
-    <tr>
+  body.innerHTML = visibleTrips.map(item => `
+    <tr class="${recentTripIds.has(String(item.id)) ? "recently-added" : ""}">
       <td><div class="person-cell" title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</div><div class="mini-muted">${escapeHtml(item.role)}</div><div class="mini-muted">${escapeHtml(formatDate(item.date))}</div></td>
       <td><div style="font-weight:700;color:#31495e">${escapeHtml(item.office)}</div><div class="mini-muted">${Number(item.distance || 0)} km</div></td>
       <td><span class="pill">${escapeHtml(item.vehicle)}</span></td>
@@ -1091,6 +1226,8 @@ function resetForm(){
   autocompleteControllers.kantor?.close();
   $("jarakLabel").textContent = "Jarak kantor otomatis";
   updateDatePreview(); updateOffice(); calculatePreview();
+  setFieldState("nama","idle");
+  setInputStep(1);
   $("tanggal").focus();
 }
 function resetAllTrips(){
@@ -1256,6 +1393,21 @@ $("inputPanelToggle").addEventListener("click",()=>{
 $("confirmResetData").addEventListener("click",resetAllTrips);
 
 initializeAutocompletes();
+$("tanggal").addEventListener("keydown",event=>{
+  if(event.key !== "Enter") return;
+  event.preventDefault();
+  normalizeDateInput();
+  $("nama").focus();
+});
+$("tanggal").addEventListener("input",()=>{
+  $("tanggal").setCustomValidity("");
+  updateDatePreview();
+});
+$("tanggal").addEventListener("blur",normalizeDateInput);
+$("tanggal").addEventListener("focus",()=>setInputStep(1));
+$("nama").addEventListener("focus",()=>setInputStep(2));
+$("kantor").addEventListener("focus",()=>setInputStep(3));
+$("tripFilter").addEventListener("input",renderTrips);
 populateLists();
 renderSetup();
 renderParticipants();
